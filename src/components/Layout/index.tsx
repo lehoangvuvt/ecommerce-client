@@ -7,20 +7,17 @@ import { usePathname } from "next/navigation";
 
 const Container = styled.div`
   position: absolute;
-  top: 92px;
   left: 0;
   width: 100%;
-  min-height: 100%;
-  display: flex;
-  flex-flow: row wrap;
 `;
 
 const Content = styled.div`
-  height: 100%;
+  min-height: calc(100vh - 150px);
   flex: 1;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.03);
   overflow-x: hidden;
   overflow-y: auto;
+  position: relative;
 `;
 
 type Props = {

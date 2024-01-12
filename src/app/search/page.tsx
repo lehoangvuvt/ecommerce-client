@@ -6,8 +6,11 @@ const Page = async ({
 }: {
   searchParams: { [key: string]: string };
 }) => {
-  const foundProducts = await ProductService.searchProducts(searchParams);
-  return <SearchView foundProducts={foundProducts}/>;
+  const [result, searchFilters] = await Promise.all([
+    ProductService.searchProducts(searchParams),
+    ProductService.getSearchFilters(searchParams),
+  ]);
+  return <SearchView result={result} searchFilters={searchFilters} />;
 };
 
 export default Page;

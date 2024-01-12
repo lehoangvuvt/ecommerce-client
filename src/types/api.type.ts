@@ -57,6 +57,14 @@ export type TProductDetails = {
   category_path: { name: string; id: string; slug: string }[];
 } & TBase;
 
+export type TPagingListResponse<T> = {
+  total: number
+  has_next: boolean
+  current_page: number
+  total_page: number
+  data: T[]
+}
+
 export type TProducItem = {
   id: string;
   createdAt: string;
@@ -67,7 +75,13 @@ export type TProducItem = {
   category_id: string;
   attribute_set_id: string;
   slug: string;
-  price_lowest: number;
-  price_highest: number;
+  prices: number[];
   product_images: string[];
 } & TBase;
+
+export type TSearchFilters = {
+  [key: string]: {
+    name: string;
+    values: any[];
+  };
+};

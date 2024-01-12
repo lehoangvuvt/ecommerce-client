@@ -36,12 +36,12 @@ const Container = styled.div<{ $width: string; $height: string }>`
 `;
 
 const PrimaryIconContainer = styled.div<{ $iconSize: number }>`
-  color: #ff5700;
+  color: red;
   font-size: ${(props) => props.$iconSize}px;
 `;
 
 const SubIconContainer = styled.div<{ $iconSize: number }>`
-  color: #ff5700;
+  color: red;
   font-size: ${(props) => props.$iconSize}px;
   position: absolute;
   background: white;

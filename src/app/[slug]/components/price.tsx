@@ -10,7 +10,7 @@ const Container = styled.div`
 `;
 
 const CurrentPrice = styled.p`
-  color: #ff5700;
+  color: red;
   font-size: 24px;
   font-weight: 500;
 `;

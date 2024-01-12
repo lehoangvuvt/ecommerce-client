@@ -26,6 +26,7 @@ const AttributeName = styled.div`
   width: 20%;
   display: flex;
   align-items: center;
+  text-transform: capitalize;
   @media (max-width: 768px) {
     width: 100%;
     justify-content: center;
@@ -33,13 +34,12 @@ const AttributeName = styled.div`
 `;
 
 const AttributeValues = styled.div`
-  width: 80%;
+  width: 75%;
   display: flex;
   flex-flow: row wrap;
   gap: 10px;
   @media (max-width: 768px) {
     width: 100%;
-    justify-content: center;
   }
 `;
 
@@ -55,11 +55,22 @@ const AttributeValue = styled.div`
   align-items: center;
   justify-content: center;
   gap: 10px;
-  flex: 1;
-  max-width: 100px;
+  width: calc(100% / 4 - 10px);
   &:hover,
   &.selected {
     border-color: red;
+  }
+  @media (max-width: 768px) {
+    width: calc(100% / 4 - 10px);
+  }
+  @media (max-width: 400px) {
+    width: calc(100% / 3 - 10px);
+  }
+  @media (max-width: 350px) {
+    width: calc(100% / 2 - 10px);
+  }
+  @media (max-width: 250px) {
+    width: 100%;
   }
 `;
 

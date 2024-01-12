@@ -174,7 +174,7 @@ const ImageSlider: React.FC<Props> = ({
             <SliderItem
               className={currentImage === image ? "selected" : ""}
               onMouseEnter={() => setCurrentImage(image)}
-              key={i}
+              key={image}
             >
               <Image
                 fill

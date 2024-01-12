@@ -88,11 +88,18 @@ const ProductTitle = styled.div`
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  @media (max-width: 768px) {
+    text-align: center;
+    width: 100%;
+  }
 `;
 
 const ProductPrice = styled.div`
   width: 100%;
   font-size: 30px;
+  @media (max-width: 768px) {
+    text-align: center;
+  }
 `;
 
 const CurrentImageContainer = styled.div`
@@ -252,10 +259,10 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
             <MyButton
               height="45px"
               onClick={() => {}}
-              background="rgba(255, 87, 0, 0.1)"
-              fontColor="rgba(255, 87, 0, 1)"
+              background="rgb(255,0,0,0.05)"
+              fontColor="red"
               fontSize="14px"
-              customStyle={{ marginRight: "20px", border: "1px solid #FF5700" }}
+              customStyle={{ marginRight: "20px", border: "1px solid red" }}
             >
               <AddShoppingCartIcon
                 style={{ fontSize: "20px" }}
@@ -266,7 +273,7 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
             <MyButton
               height="45px"
               onClick={() => {}}
-              background="#FF5700"
+              background="red"
               fontColor="white"
               fontSize="14px"
             >

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import styled from "styled-components";
 
 const Container = styled.div`
-  width: calc(20% - 10px);
+  width: calc(20% - 8px);
   aspect-ratio: 0.6;
   display: flex;
   flex-flow: column wrap;
@@ -22,12 +22,31 @@ const Container = styled.div`
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.125);
     transform: translateY(-2px);
   }
+  @media (max-width: 1110px) {
+    width: calc(25% - 8px);
+    aspect-ratio: 0.5;
+  }
+  @media (max-width: 768px) {
+    width: calc(25% - 7.5px);
+    height: 280px;
+  }
+  @media (max-width: 600px) {
+    width: calc(50% - 7.5px);
+    height: 280px;
+  }
+  @media (max-width: 350px) {
+    width: 100%;
+    height: 280px;
+  }
 `;
 
 const ProductImage = styled.div`
   width: 100%;
   height: 60%;
   position: relative;
+  @media (max-width: 350px) {
+    height: 60%;
+  }
 `;
 
 const ProductInfo = styled.div`
@@ -36,6 +55,9 @@ const ProductInfo = styled.div`
   display: flex;
   flex-flow: column wrap;
   align-items: center;
+  @media (max-width: 350px) {
+    height: 40%;
+  }
 `;
 
 const ProductName = styled.div`
@@ -82,8 +104,13 @@ const ProductItem: React.FC<Props> = ({ product }) => {
       <ProductInfo>
         <ProductName>{product.product_name}</ProductName>
         <ProductPrice>
-          {convertNumberToCurrencyString(product.price_lowest)} -{" "}
-          {convertNumberToCurrencyString(product.price_highest)}
+          {convertNumberToCurrencyString(
+            product.prices.sort((a, b) => a - b)[0]
+          )}{" "}
+          -{" "}
+          {convertNumberToCurrencyString(
+            product.prices.sort((a, b) => b - a)[1]
+          )}
         </ProductPrice>
       </ProductInfo>
     </Container>
