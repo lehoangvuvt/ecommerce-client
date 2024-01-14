@@ -2,18 +2,19 @@
 
 import styled from "styled-components";
 import DoneIcon from "@mui/icons-material/Done";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import useStore from "@/store/store";
 
 const Container = styled.div`
-  width: 100%;
+  width: 85%;
   display: flex;
   flex-flow: column wrap;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 25px;
   @media (max-width: 768px) {
-    width: 50%;
+    width: 90%;
+    margin-left: 5%;
   }
-  margin-bottom: 10px;
 `;
 
 const FilterName = styled.div`
@@ -21,7 +22,8 @@ const FilterName = styled.div`
   padding: 10px 15px;
   box-sizing: border-box;
   text-transform: capitalize;
-  font-size: 15px;
+  font-size: 14px;
+  margin-bottom: 2.5px;
 `;
 
 const FilterValues = styled.div`
@@ -38,15 +40,15 @@ const FilterValue = styled.div`
   display: flex;
   flex-flow: row wrap;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   text-transform: capitalize;
 `;
 
 const Checkbox = styled.div`
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   background: white;
   border-radius: 2px;
   border: 1px solid rgba(0, 0, 0, 0.2);

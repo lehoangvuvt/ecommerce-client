@@ -4,7 +4,7 @@ import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 import { FormEvent, useEffect, useState } from "react";
 import useStore from "@/store/store";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useScreenWidth from "@/hooks/useScreenWidth";
 
 const DesktopSearchBar = styled.form`
@@ -21,10 +21,15 @@ const DesktopSearchBar = styled.form`
 `;
 
 const MobileSearchBar = styled.form`
-  font-size: 28px;
+  font-size: 26px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  @media (max-width: 768px) {
+    width: calc(100% - 60px);
+    justify-content: flex-start;
+    padding-left: 10px;
+  }
 `;
 
 const InputField = styled.input`
@@ -37,6 +42,26 @@ const InputField = styled.input`
   overflow-wrap: break-word;
   text-overflow: ellipsis;
   min-width: 0;
+  @media (max-width: 768px) {
+    width: 98%;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    padding: 6px 8px;
+  }
+`;
+
+const FakeInputField = styled.div`
+  outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 98%;
+  white-space: nowrap;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  padding: 6px 8px;
+  color: rgba(0, 0, 0, 0.8);
 `;
 
 const SearchIconContainer = styled.div`
@@ -103,11 +128,12 @@ const MobileSearchBarContainer = styled.div`
 
 const MobileSearchBarInput = styled.input`
   background-color: white;
-  width: 73%;
-  padding: 8px 10px;
+  width: 80%;
+  padding: 6px 8px;
   font-size: 14px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   outline: none;
+  border-radius: 4px;
 `;
 
 const SearchBar = () => {
@@ -117,14 +143,13 @@ const SearchBar = () => {
   const router = useRouter();
   const [isOpenMobileSearchBar, setOpenMobileSearchBar] = useState(false);
   const { deviceType } = useScreenWidth();
+  const searchParams = useSearchParams();
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (searchText.length > 0) {
       setNewFilters({ keyword: [searchText] });
-    } else {
-      setNewFilters({ keyword: [""] });
     }
     if (!pathname.includes("/search") || deviceType === "mobile") {
       if (searchText.length > 0) {
@@ -140,6 +165,15 @@ const SearchBar = () => {
     }
   }, [filters]);
 
+  useEffect(() => {
+    if (!searchParams.get("keyword")) {
+      const updatedFilters = Object.assign({}, filters);
+      delete updatedFilters["keyword"];
+      setNewFilters(updatedFilters);
+      setSearchText("");
+    }
+  }, [searchParams]);
+
   return deviceType === "desktop" ? (
     <DesktopSearchBar onSubmit={onSubmit}>
       <SearchIconContainer>
@@ -154,11 +188,9 @@ const SearchBar = () => {
     </DesktopSearchBar>
   ) : (
     <MobileSearchBar onSubmit={onSubmit}>
-      <SearchIcon
-        onClick={() => setOpenMobileSearchBar(true)}
-        color="inherit"
-        fontSize="inherit"
-      />
+      <FakeInputField onClick={() => setOpenMobileSearchBar(true)}>
+        {searchText.length > 0 ? searchText : "What are you looking for today?"}
+      </FakeInputField>
       {isOpenMobileSearchBar && (
         <MobileSearchBarContainer>
           <MobileSearchBarInput

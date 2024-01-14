@@ -8,6 +8,7 @@ import logo from "/public/icon/logo.png";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import useScreenWidth from "@/hooks/useScreenWidth";
+import Link from "next/link";
 
 const headerHeight = 150;
 
@@ -43,7 +44,22 @@ const SubContainer = styled.div`
   align-items: center;
 `;
 
-const SubContainerLink = styled.div`
+const SubContainerLeft = styled.div`
+  height: 100%;
+  width: 50%;
+  display: flex;
+  align-items: center;
+`;
+
+const SubContainerRight = styled.div`
+  height: 100%;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const SubContainerLink = styled(Link)`
   height: 100%;
   display: flex;
   align-items: center;
@@ -69,24 +85,41 @@ const HeaderLeftContainer = styled.div`
   width: calc((100% - 70%) / 2);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
-  & > div {
-    width: 55px;
-    aspect-ratio: 1;
-    @media (max-width: 768px) {
-      width: 45px;
-    }
-    img {
-      transition: filter 0.2s ease;
+  div {
+    &.menu {
+      width: 18%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 10px;
       cursor: pointer;
-      &:hover {
-        filter: grayscale(90%);
+      font-size: 24px;
+    }
+    &.logo {
+      width: 55px;
+      aspect-ratio: 1;
+      display: flex;
+      position: relative;
+      justify-content: center;
+      align-items: center;
+      margin-left: 37%;
+      @media (max-width: 768px) {
+        width: 40px;
+        margin-left: 10px;
+      }
+      img {
+        transition: filter 0.2s ease;
+        cursor: pointer;
+        &:hover {
+          filter: grayscale(90%);
+        }
       }
     }
   }
   @media (max-width: 768px) {
-    width: 50%;
+    width: 100%;
   }
 `;
 
@@ -97,8 +130,8 @@ const HeaderCenterContainer = styled.div`
   align-items: center;
   justify-content: flex-start;
   @media (max-width: 768px) {
-    width: 35%;
-    justify-content: flex-end;
+    width: 100%;
+    justify-content: flex-start;
   }
 `;
 
@@ -136,6 +169,9 @@ const MiniHeader = styled.div`
       transform: translateY(0%);
     }
   }
+  @media (max-width: 768px) {
+    flex-flow: column;
+  }
 `;
 
 const disableMiniHeaderRoutes: string[] = [];
@@ -144,11 +180,12 @@ const Header = () => {
   const [isHidden, setIsHidden] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const [isOpenSubMenuMobile, setOpenSubMenuMobile] = useState(false);
   const { deviceType } = useScreenWidth();
 
   const handleScroll = () => {
     if (!disableMiniHeaderRoutes.includes(pathname)) {
-      if (window.scrollY > headerHeight) {
+      if (window.scrollY > headerHeight * 1.5) {
         if (!isHidden) {
           setIsHidden(true);
         }
@@ -165,10 +202,10 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
-  const HeaderLeft = () => {
+  const HeaderLeftDesktop = () => {
     return (
       <HeaderLeftContainer>
-        <div>
+        <div className="logo">
           <Image
             onClick={() => router.push("/")}
             alt="logo"
@@ -183,10 +220,45 @@ const Header = () => {
     );
   };
 
-  const HeaderCenter = () => {
+  const HeaderLeftMobile = () => {
+    return (
+      <HeaderLeftContainer>
+        <div className="logo">
+          <Image
+            onClick={() => router.push("/")}
+            alt="logo"
+            src={logo}
+            fill
+            style={{
+              objectFit: "contain",
+              objectPosition: "center",
+            }}
+          />
+        </div>
+      </HeaderLeftContainer>
+    );
+  };
+
+  const HeaderCenterDesktop = () => {
     return (
       <HeaderCenterContainer>
         <SearchBar />
+      </HeaderCenterContainer>
+    );
+  };
+
+  const HeaderCenterMobile = () => {
+    return (
+      <HeaderCenterContainer>
+        <SearchBar />
+        <ShoppingCartIcon
+          color="inherit"
+          fontSize="inherit"
+          style={{
+            fontSize: "23px",
+            margin: "auto",
+          }}
+        />
       </HeaderCenterContainer>
     );
   };
@@ -204,22 +276,33 @@ const Header = () => {
       <>
         <FullHeader className={isHidden ? "hide" : "show"}>
           <SubContainer>
-            <SubContainerLink>Seller Centre</SubContainerLink>
-            <Line />
-            <SubContainerLink>Download</SubContainerLink>
-            <Line />
-            <SubContainerLink className="last">Follow us</SubContainerLink>
+            <SubContainerLeft>
+              <SubContainerLink href="/">Seller Centre</SubContainerLink>
+              <Line />
+              <SubContainerLink href="/">Download</SubContainerLink>
+              <Line />
+              <SubContainerLink href="/" className="last">
+                Follow us
+              </SubContainerLink>
+            </SubContainerLeft>
+            <SubContainerRight>
+              <SubContainerLink href="/sign-up">Sign Up</SubContainerLink>
+              <Line />
+              <SubContainerLink href="/login" className="last">
+                Login
+              </SubContainerLink>
+            </SubContainerRight>
           </SubContainer>
           <MainContainer>
-            <HeaderLeft />
-            <HeaderCenter />
+            <HeaderLeftDesktop />
+            <HeaderCenterDesktop />
             <HeaderRight />
           </MainContainer>
         </FullHeader>
         {isHidden && (
           <MiniHeader>
-            <HeaderLeft />
-            <HeaderCenter />
+            <HeaderLeftDesktop />
+            <HeaderCenterDesktop />
             <HeaderRight />
           </MiniHeader>
         )}
@@ -230,16 +313,18 @@ const Header = () => {
   const renderMobileHeader = () => {
     return (
       <MiniHeader>
-        <HeaderLeft />
-        <HeaderCenter />
-        <HeaderRight />
+        {/* <HeaderLeftMobile /> */}
+        <HeaderCenterMobile />
       </MiniHeader>
     );
   };
 
-  return deviceType === "desktop"
-    ? renderDesktopHeader()
-    : renderMobileHeader();
+  return (
+    <>
+      {deviceType === "desktop" && renderDesktopHeader()}
+      {deviceType === "mobile" && renderMobileHeader()}
+    </>
+  );
 };
 
 export default Header;

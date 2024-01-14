@@ -2,6 +2,7 @@
 
 import styled from "styled-components";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import useStore from "@/store/store";
 
 const Container = styled.div`
   display: flex;
@@ -50,19 +51,54 @@ const Paging: React.FC<Props> = ({
   total_page,
   style,
 }) => {
+  const { addFilterValue, filters, setNewFilters } = useStore();
+  const prevPage = () => {
+    if (current_page === 0) return;
+    if (filters["page"]) {
+      const updatedFilters = Object.assign({}, filters);
+      updatedFilters["page"][0] = (
+        parseInt(updatedFilters["page"][0]) - 1
+      ).toString();
+      setNewFilters(updatedFilters);
+    } else {
+      addFilterValue("page", "1");
+    }
+  };
+
+  const nextPage = () => {
+    if (!has_next) return;
+    if (filters["page"]) {
+      const updatedFilters = Object.assign({}, filters);
+      updatedFilters["page"][0] = (
+        parseInt(updatedFilters["page"][0]) + 1
+      ).toString();
+      setNewFilters(updatedFilters);
+    } else {
+      addFilterValue("page", "1");
+    }
+  };
+
   return (
     <Container style={style}>
       <PageText>
         {current_page + 1}/{total_page}
       </PageText>
-      <PageButton className={current_page === 0 ? "disabled" : ""}>
+      <PageButton
+        disabled={current_page === 0}
+        onClick={() => prevPage()}
+        className={current_page === 0 ? "disabled" : ""}
+      >
         <ArrowForwardIosIcon
           style={{ transform: "rotate(180deg)" }}
           color="inherit"
           fontSize="inherit"
         />
       </PageButton>
-      <PageButton className={!has_next ? "disabled" : ""}>
+      <PageButton
+        disabled={!has_next}
+        onClick={() => nextPage()}
+        className={!has_next ? "disabled" : ""}
+      >
         <ArrowForwardIosIcon color="inherit" fontSize="inherit" />
       </PageButton>
     </Container>

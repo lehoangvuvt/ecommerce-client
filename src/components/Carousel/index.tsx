@@ -55,20 +55,11 @@ const BannerImage = styled.div<{ $bgImg: string }>`
 
 type Props = {
   style?: React.CSSProperties;
+  images: string[];
 };
 
-const bannerImgs = [
-  "https://www.nylon.com.sg/wp-content/uploads/2020/01/uniqlo-u-banner-.png",
-  "https://i0.wp.com/www.nylon.com.sg/wp-content/uploads/2022/02/uniqlo-u-ss22-banner-scaled.jpg",
-  "https://conversationsabouther.net/wp-content/uploads/2019/04/asdfghjklefxefxrcdsfdsd-2-1.jpg",
-];
-
-const Carousel: React.FC<Props> = ({ style }) => {
-  const slideImgs = [
-    bannerImgs[bannerImgs.length - 1],
-    ...bannerImgs,
-    bannerImgs[0],
-  ];
+const Carousel: React.FC<Props> = ({ style, images }) => {
+  const slideImgs = [images[images.length - 1], ...images, images[0]];
   const [currentIndex, setCurrentIndex] = useState(1);
   const currentIndexRef = useRef(1);
   const scrollRef = useRef<HTMLDivElement>(null);

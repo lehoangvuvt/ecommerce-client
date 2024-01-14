@@ -1,3 +1,4 @@
+import axios from "axios";
 import baseAxios from "./baseAxios";
 import {
   TProductDetails,
@@ -13,21 +14,22 @@ export const ProductService = {
     [key: string]: string;
   }): Promise<TPagingListResponse<TProducItem>> {
     let searchParamsString = "";
+    let currentPage = 0;
     for (let key in searchParams) {
+      if (key === "page") {
+        currentPage = parseInt(searchParams[key]);
+      }
       searchParamsString += `${key}=${searchParams[key]}&`;
     }
     searchParamsString = searchParamsString.substring(
       0,
       searchParamsString.length - 1
     );
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/search/${searchParamsString}&page=0`,
-      {
-        method: "GET",
-        cache: "no-store",
-      }
-    );
-    const data = await response.json();
+    const response = await axios({
+      url: `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/search/${searchParamsString}&page=${currentPage}`,
+      method: "GET",
+    });
+    const data = response.data;
     return data;
   },
   async getSearchFilters(searchParams: {
@@ -41,14 +43,12 @@ export const ProductService = {
       0,
       searchParamsString.length - 1
     );
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/search/search-filters/${searchParamsString}`,
-      {
-        method: "GET",
-        cache: "no-store",
-      }
-    );
-    const data = (await response.json()) as TSearchFilters;
+    const response = await axios({
+      url: `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/search/search-filters/${searchParamsString}`,
+      method: "GET",
+    });
+    const data = response.data as TSearchFilters;
+    console.log({ data });
     return data;
   },
   async getProductDetails(slug: string): Promise<TProductDetails> {

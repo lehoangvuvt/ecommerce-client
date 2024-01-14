@@ -9,11 +9,13 @@ import Details from "./components/details";
 const Container = styled.div`
   display: flex;
   flex-flow: column wrap;
-  margin-top: 60px;
-  margin-bottom: 60px;
   width: 100%;
   gap: 20px;
   align-items: center;
+  padding-top: 50px;
+  @media (max-width: 768px) {
+    padding-top: 70px;
+  }
 `;
 
 type Props = {
