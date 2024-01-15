@@ -1,12 +1,13 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 import Header from "./Header";
 import styled from "styled-components";
 import { usePathname } from "next/navigation";
 import Footer from "./Footer";
 import useScreenWidth from "@/hooks/useScreenWidth";
 import SubMenuMobile from "./SubMenuMobile";
+import Path from "./Path";
 
 const Container = styled.div`
   position: absolute;
@@ -24,6 +25,8 @@ type Props = {
 };
 const noHeaderRoutes: string[] = ["/login"];
 const noFooterRoutes: string[] = [];
+const noPathRoutes: string[] = ["/", "/login", "/sign-up", "/cart"];
+const withSubMenuRoutes: string[] = ["/", "/search", "/login", "/sign-up"];
 
 const Layout = ({ children }: Props) => {
   const pathname = usePathname();
@@ -32,9 +35,18 @@ const Layout = ({ children }: Props) => {
   return (
     <Container>
       {!noHeaderRoutes.includes(pathname) && <Header />}
-      <Content>{children}</Content>
-      {!noFooterRoutes.includes(pathname) && <Footer />}
-      {deviceType === "mobile" && <SubMenuMobile />}
+      <Content>
+        {!noPathRoutes.includes(pathname) && deviceType === "desktop" && (
+          <Path />
+        )}
+        {children}
+      </Content>
+      {!noFooterRoutes.includes(pathname) && deviceType === "desktop" && (
+        <Footer />
+      )}
+      {deviceType === "mobile" && withSubMenuRoutes.includes(pathname) && (
+        <SubMenuMobile />
+      )}
     </Container>
   );
 };

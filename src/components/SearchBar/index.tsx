@@ -26,9 +26,11 @@ const MobileSearchBar = styled.form`
   align-items: center;
   justify-content: flex-end;
   @media (max-width: 768px) {
-    width: calc(100% - 60px);
-    justify-content: flex-start;
+    width: calc(100% - 40px);
+    justify-content: flex-end;
     padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
 `;
 
@@ -188,9 +190,12 @@ const SearchBar = () => {
     </DesktopSearchBar>
   ) : (
     <MobileSearchBar onSubmit={onSubmit}>
-      <FakeInputField onClick={() => setOpenMobileSearchBar(true)}>
-        {searchText.length > 0 ? searchText : "What are you looking for today?"}
-      </FakeInputField>
+      <div
+        onClick={() => setOpenMobileSearchBar(true)}
+        style={{ height: "100%", display: "flex", alignItems: "center" }}
+      >
+        <SearchIcon color="inherit" fontSize="inherit" />
+      </div>
       {isOpenMobileSearchBar && (
         <MobileSearchBarContainer>
           <MobileSearchBarInput

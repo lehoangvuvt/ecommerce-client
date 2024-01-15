@@ -6,6 +6,7 @@ import banner0 from "/public/images/home/carousel/banner-0.png";
 import banner1 from "/public/images/home/carousel/banner-1.jpg";
 import banner2 from "/public/images/home/carousel/banner-2.jpg";
 import banner3 from "/public/images/home/carousel/banner-3.jpg";
+import Spinner from "@/components/Spinner";
 
 const Container = styled.div`
   width: 100%;
@@ -20,7 +21,7 @@ const Container = styled.div`
 
 const HomeView = () => {
   return (
-    <Container>
+    <Container style={{ display: "flex", alignItems: "center" }}>
       <Carousel
         style={{ height: "100vh" }}
         images={[banner0.src, banner1.src, banner2.src, banner3.src]}

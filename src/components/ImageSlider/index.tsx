@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import useScreenWidth from "@/hooks/useScreenWidth";
 
 const Container = styled.div`
   width: 100%;
@@ -91,6 +91,7 @@ const ImageSlider: React.FC<Props> = ({
   images,
   isShowCurrentImage = true,
 }) => {
+  const { deviceType } = useScreenWidth();
   const [currentImage, setCurrentImage] = useState<string | null>("");
   const [range, setRange] = useState<{ start: number; end: number } | null>(
     null
@@ -161,8 +162,8 @@ const ImageSlider: React.FC<Props> = ({
             alt="current-slider-img"
             fill
             style={{
-              objectFit: "contain",
-              objectPosition: "center",
+              objectFit: deviceType === "desktop" ? "contain" : "cover",
+              objectPosition: deviceType === "desktop" ? "center" : "top",
               opacity: isShowCurrentImage ? 1 : 0,
             }}
           />

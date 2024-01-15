@@ -10,6 +10,9 @@ const Container = styled.div`
   flex-flow: column wrap;
   gap: 20px;
   justify-content: center;
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
 `;
 
 const AttributeSelector = styled.div`

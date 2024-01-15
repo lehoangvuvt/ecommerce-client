@@ -14,24 +14,18 @@ const getSearchProducts = async ({
   return result;
 };
 
-const useSearchProducts = (
-  searchParams: {
-    [key: string]: string;
-  },
-  deviceType: "desktop" | "mobile" | null
-): {
+const useSearchInfiniteProducts = (searchParams: {
+  [key: string]: string;
+}): {
   result: TPagingListResponse<TProducItem>;
   isError: boolean;
   isLoading: boolean;
 } => {
   const { data, isError, isLoading } = useQuery(
-    [REACT_QUERY_KEYS.GET_SEARCH_PRODUCTS, searchParams],
+    [REACT_QUERY_KEYS.GET_SEARCH_INFINITE_PRODUCTS, searchParams],
     getSearchProducts,
     {
-      enabled:
-        !!searchParams &&
-        Object.keys(searchParams).length > 0 &&
-        deviceType === "desktop",
+      enabled: !!searchParams && Object.keys(searchParams).length > 0,
     }
   );
   return {
@@ -47,4 +41,4 @@ const useSearchProducts = (
   };
 };
 
-export default useSearchProducts;
+export default useSearchInfiniteProducts;

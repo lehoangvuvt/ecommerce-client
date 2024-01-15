@@ -64,14 +64,15 @@ const TabMobile = styled.div`
   box-sizing: border-box;
   cursor: pointer;
   &.selected {
-    color: red;
+    color: #df2029;
     border-bottom: 3px solid red;
   }
   border-bottom: 3px solid transparent;
-  color: black;
+  color: rgba(0, 0, 0, 0.5);
   background: white;
-  font-size: 14px;
+  font-size: 13px;
   display: flex;
+  font-weight: 600;
   justify-content: center;
   align-items: center;
   @media (max-width: 260px) {

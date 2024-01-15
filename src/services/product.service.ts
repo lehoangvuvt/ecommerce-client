@@ -18,8 +18,9 @@ export const ProductService = {
     for (let key in searchParams) {
       if (key === "page") {
         currentPage = parseInt(searchParams[key]);
+      } else {
+        searchParamsString += `${key}=${searchParams[key]}&`;
       }
-      searchParamsString += `${key}=${searchParams[key]}&`;
     }
     searchParamsString = searchParamsString.substring(
       0,

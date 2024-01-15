@@ -175,6 +175,7 @@ const MiniHeader = styled.div`
 `;
 
 const disableMiniHeaderRoutes: string[] = [];
+const enableMobileHeaderRoutes: string[] = ["/", "/search"];
 
 const Header = () => {
   const [isHidden, setIsHidden] = useState(false);
@@ -199,7 +200,6 @@ const Header = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
   const HeaderLeftDesktop = () => {
@@ -322,7 +322,9 @@ const Header = () => {
   return (
     <>
       {deviceType === "desktop" && renderDesktopHeader()}
-      {deviceType === "mobile" && renderMobileHeader()}
+      {deviceType === "mobile" &&
+        enableMobileHeaderRoutes.includes(pathname) &&
+        renderMobileHeader()}
     </>
   );
 };

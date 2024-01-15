@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      {
+        protocol: "https",
+        hostname: "down-vn.img.susercontent.com",
+      },
     ],
   },
   compiler: {

@@ -19,7 +19,9 @@ const Container = styled.div`
   }
   @media (max-width: 768px) {
     flex-flow: column wrap;
-    width: 95%;
+    width: 100%;
+    border: none;
+    border-radius: 0px;
   }
 `;
 

@@ -12,7 +12,7 @@ const SubMenuMobileContainer = styled.div`
   position: fixed;
   bottom: 0;
   width: 100%;
-  height: 50px;
+  height: 60px;
   background-color: white;
   box-shadow: 0px -5px 5px -5px rgba(0, 0, 0, 0.05);
   z-index: 500;
@@ -30,11 +30,14 @@ const SubMenuMobileItem = styled(Link)`
   justify-content: center;
   font-size: 12px;
   overflow: hidden;
+  gap: 4px;
   text-overflow: ellipsis;
   white-space: normal;
   min-width: 0;
+  color: rgba(0,0,0,0.6);
+  font-weight: 600;
   &.selected {
-    color: red;
+    color: #DF2029;
   }
   .icon {
     font-size: 21px;
@@ -58,7 +61,7 @@ const SubMenuMobile = () => {
         href="/seller"
       >
         <StorefrontIcon className="icon" color="inherit" fontSize="inherit" />
-        Seller Centre
+        Seller
       </SubMenuMobileItem>
       <SubMenuMobileItem
         className={pathname === "/sign-up" ? "selected" : ""}

@@ -2,23 +2,20 @@
 
 import styled from "styled-components";
 import ProductItem from "./components/productItem";
-import {
-  TPagingListResponse,
-  TProducItem,
-  TSearchFilters,
-} from "@/types/api.type";
 import SearchFilter from "./components/searchFilter";
 import useStore from "@/store/store";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { UIEvent, UIEventHandler, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Paging from "./components/paging";
 import useScreenWidth from "@/hooks/useScreenWidth";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Tabs, { TTabItem } from "@/components/Tabs";
-import { ProductService } from "@/services/product.service";
 import useSearchProducts from "@/react-query/hooks/useSearchProducts";
 import useSearchFilters from "@/react-query/hooks/useSearchFilters";
+import Spinner from "@/components/Spinner";
+import { TProducItem } from "@/types/api.type";
+import MobileList from "./components/mobileList";
 
 const Container = styled.div`
   width: 80%;
@@ -29,9 +26,11 @@ const Container = styled.div`
   min-height: 100vh;
   @media (max-width: 768px) {
     flex-flow: column wrap;
-    width: 90%;
-    margin-left: 5%;
+    width: 100%;
+    margin-left: 0%;
     padding-top: 20px;
+    padding-left: 5px;
+    padding-right: 5px;
   }
 `;
 
@@ -57,13 +56,15 @@ const Right = styled.div`
   }
 `;
 
-const ProductsContainer = styled.div`
+export const ProductsContainer = styled.div`
   width: 100%;
   display: flex;
   flex-flow: row wrap;
   gap: 10px;
   @media (max-width: 768px) {
     margin-top: 100px;
+    margin-bottom: 80px;
+    gap: 5px;
   }
 `;
 
@@ -171,34 +172,34 @@ const SearchView = ({
 }: {
   searchParams: { [key: string]: string };
 }) => {
+  const { deviceType } = useScreenWidth();
   const {
     isError: isErrorSearchProducts,
     isLoading: isLoadingSearchProducts,
     result: products,
-  } = useSearchProducts(searchParams);
+  } = useSearchProducts(searchParams, deviceType);
   const {
     isError: isErrorSearchFilters,
     isLoading: isLoadingSearchFilters,
     result: searchFilters,
   } = useSearchFilters(searchParams);
-
-  const { addFilterValues, filters } = useStore();
+  const { addFilterValues, filters, setPath } = useStore();
   const [isInitial, setIsInitial] = useState(true);
   const router = useRouter();
-  const { deviceType } = useScreenWidth();
   const [isOpenMobileFilters, setOpenMobileFilters] = useState(false);
   const sortTabItems: TTabItem[] = [
     { reactNode: <p>Popular</p>, value: "pop" },
     { reactNode: <p>Latest</p>, value: "ctime" },
     { reactNode: <p>Top Sales</p>, value: "sales" },
   ];
+  const productsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     for (let key in searchParams) {
-      const queryKey = key;
-      const values = searchParams[queryKey].split(",");
-      addFilterValues(queryKey, values);
+      const values = searchParams[key].split(",");
+      addFilterValues(key, values);
     }
+    setPath(["Home", searchParams["keyword"]]);
   }, [searchParams]);
 
   useEffect(() => {
@@ -300,10 +301,20 @@ const SearchView = ({
             ...sortTabItems,
             {
               reactNode: (
-                <FilterAltIcon
-                  key="filter"
-                  onClick={() => setOpenMobileFilters(true)}
-                />
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    paddingRight: "4px",
+                  }}
+                >
+                  <FilterAltIcon
+                    key="filter"
+                    style={{ color: "rgba(0,0,0,0.8)" }}
+                    onClick={() => setOpenMobileFilters(true)}
+                  />
+                </div>
               ),
               value: "filter-btn",
               disabled: true,
@@ -333,23 +344,36 @@ const SearchView = ({
                 />
               </RightHeader>
             )}
-            <ProductsContainer>
-              {products &&
-                products.data.map((product, pIndex) => (
-                  <ProductItem key={pIndex} product={product} />
-                ))}
-            </ProductsContainer>
+            {deviceType === "desktop" && (
+              <ProductsContainer ref={productsContainerRef}>
+                {products &&
+                  products.data.map((product, pIndex) => (
+                    <ProductItem key={pIndex} product={product} />
+                  ))}
+              </ProductsContainer>
+            )}
           </>
         )}
+
+        {deviceType === "mobile" && <MobileList />}
+
+        {isLoadingSearchProducts && (
+          <div
+            style={{
+              width: "100%",
+              height: "50%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Spinner />
+          </div>
+        )}
       </Right>
-      {isLoadingSearchProducts && (
-        <EmptyContainer>
-          <h1>Loading</h1>
-        </EmptyContainer>
-      )}
-      {!isLoadingSearchProducts && products.data.length === 0 && (
-        <EmptyContainer>Empty</EmptyContainer>
-      )}
+      {!isLoadingSearchProducts &&
+        products.data.length === 0 &&
+        deviceType === "desktop" && <EmptyContainer>Empty</EmptyContainer>}
     </Container>
   );
 };

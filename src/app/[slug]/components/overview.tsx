@@ -10,6 +10,7 @@ import Variances, { TAttribute } from "./variances";
 import Price from "./price";
 import QuantityInput from "@/components/QuantityInput";
 import MyButton from "@/components/Button";
+import useScreenWidth from "@/hooks/useScreenWidth";
 
 const Container = styled.div`
   width: 78%;
@@ -24,7 +25,9 @@ const Container = styled.div`
   }
   @media (max-width: 768px) {
     flex-flow: column wrap;
-    width: 95%;
+    width: 100%;
+    border: none;
+    padding: 0px;
   }
 `;
 
@@ -91,6 +94,7 @@ const ProductTitle = styled.div`
   @media (max-width: 768px) {
     text-align: center;
     width: 100%;
+    font-size: 16px;
   }
 `;
 
@@ -99,6 +103,7 @@ const ProductPrice = styled.div`
   font-size: 30px;
   @media (max-width: 768px) {
     text-align: center;
+    padding: 0px 20px;
   }
 `;
 
@@ -106,6 +111,10 @@ const CurrentImageContainer = styled.div`
   position: absolute;
   width: 90%;
   height: 400px;
+  font-size: 30px;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const OverviewSection = styled.section`
@@ -131,6 +140,7 @@ const OverviewSectionContent = styled.section`
   flex: 1;
   @media (max-width: 768px) {
     width: 100%;
+    padding: 0px 20px;
   }
   &.buttons-container {
     button {
@@ -143,12 +153,24 @@ const OverviewSectionContent = styled.section`
   }
 `;
 
+const AddToCartMobileFooter = styled.div`
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 45px;
+  font-weight: 600;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
+`;
+
 type Props = {
   details: TProductDetails;
   attributes: TAttribute;
 };
 
 const Overview: React.FC<Props> = ({ details, attributes }) => {
+  const { deviceType } = useScreenWidth();
   const [selectedVariance, setSelectedVariance] = useState<{
     main: string;
     sub: string;
@@ -197,9 +219,9 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
           <CurrentImageContainer>
             <Image
               style={{
-                objectFit: "contain",
-                objectPosition: "center",
-                transform: "scale(0.9)",
+                objectFit: deviceType === "desktop" ? "contain" : "cover",
+                objectPosition: deviceType === "desktop" ? "center" : "top",
+                transform: deviceType === "desktop" ? "scale(0.9)" : "scale(1)",
               }}
               fill
               src={currentImage}
@@ -227,61 +249,90 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
           onHoverMainAtrr={(imageURL) => setCurrentImage(imageURL)}
           onLeaveAtrr={() => setCurrentImage(null)}
         />
-        <OverviewSection>
-          <OverviewSectionTitle>Quantity</OverviewSectionTitle>
-          <OverviewSectionContent>
-            <QuantitySelector>
-              <QuantityInput
-                style={{ height: "35px" }}
-                onDecrease={() => qty > 1 && setQty(qty - 1)}
-                onIncrease={() => {
-                  if (qty < getVarianceInfo().qty) {
-                    setQty(qty + 1);
-                  }
-                }}
-                onChange={(value) => {
-                  if (parseInt(value)) {
-                    setQty(parseInt(value));
-                  } else {
-                    if (value === "") {
-                      setQty(1);
-                    }
-                  }
-                }}
-                quantity={qty}
-              />
-              <p>{getVarianceInfo().qty} products available</p>
-            </QuantitySelector>
-          </OverviewSectionContent>
-        </OverviewSection>
-        <OverviewSection>
-          <OverviewSectionContent className="buttons-container">
-            <MyButton
-              height="45px"
-              onClick={() => {}}
-              background="rgb(255,0,0,0.05)"
-              fontColor="red"
-              fontSize="14px"
-              customStyle={{ marginRight: "20px", border: "1px solid red" }}
-            >
-              <AddShoppingCartIcon
-                style={{ fontSize: "20px" }}
-                color="inherit"
-              />{" "}
-              Add To Cart
-            </MyButton>
-            <MyButton
-              height="45px"
-              onClick={() => {}}
-              background="red"
-              fontColor="white"
-              fontSize="14px"
-            >
-              Buy Now
-            </MyButton>
-          </OverviewSectionContent>
-        </OverviewSection>
+        {deviceType === "desktop" && (
+          <>
+            <OverviewSection>
+              <OverviewSectionTitle>Quantity</OverviewSectionTitle>
+              <OverviewSectionContent>
+                <QuantitySelector>
+                  <QuantityInput
+                    style={{ height: "35px" }}
+                    onDecrease={() => qty > 1 && setQty(qty - 1)}
+                    onIncrease={() => {
+                      if (qty < getVarianceInfo().qty) {
+                        setQty(qty + 1);
+                      }
+                    }}
+                    onChange={(value) => {
+                      if (parseInt(value)) {
+                        setQty(parseInt(value));
+                      } else {
+                        if (value === "") {
+                          setQty(1);
+                        }
+                      }
+                    }}
+                    quantity={qty}
+                  />
+                  <p>{getVarianceInfo().qty} products available</p>
+                </QuantitySelector>
+              </OverviewSectionContent>
+            </OverviewSection>
+            <OverviewSection>
+              <OverviewSectionContent className="buttons-container">
+                <MyButton
+                  height="45px"
+                  onClick={() => {}}
+                  background="rgb(255,0,0,0.05)"
+                  fontColor="red"
+                  fontSize="14px"
+                  customStyle={{ marginRight: "20px", border: "1px solid red" }}
+                >
+                  <AddShoppingCartIcon
+                    style={{ fontSize: "20px" }}
+                    color="inherit"
+                  />{" "}
+                  Add To Cart
+                </MyButton>
+                <MyButton
+                  height="45px"
+                  onClick={() => {}}
+                  background="red"
+                  fontColor="white"
+                  fontSize="14px"
+                >
+                  Buy Now
+                </MyButton>
+              </OverviewSectionContent>
+            </OverviewSection>
+          </>
+        )}
       </Right>
+      {deviceType === "mobile" && (
+        <AddToCartMobileFooter>
+          <MyButton
+            height="100%"
+            onClick={() => {}}
+            background="white"
+            fontColor="red"
+            fontSize="13px"
+            width="50%"
+          >
+            <AddShoppingCartIcon style={{ fontSize: "20px" }} color="inherit" />{" "}
+            Add To Cart
+          </MyButton>
+          <MyButton
+            height="100%"
+            onClick={() => {}}
+            background="red"
+            fontColor="white"
+            fontSize="13px"
+            width="50%"
+          >
+            Buy Now
+          </MyButton>
+        </AddToCartMobileFooter>
+      )}
     </Container>
   );
 };

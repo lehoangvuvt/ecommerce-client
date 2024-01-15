@@ -1,5 +1,6 @@
 "use client";
 
+import useStore from "@/store/store";
 import { TProducItem } from "@/types/api.type";
 import { convertNumberToCurrencyString } from "@/utils/string.utils";
 import Image from "next/image";
@@ -27,17 +28,10 @@ const Container = styled.div`
     aspect-ratio: 0.5;
   }
   @media (max-width: 768px) {
-    width: calc(25% - 7.5px);
+    width: calc(50% - 2.5px);
     height: 280px;
   }
-  @media (max-width: 600px) {
-    width: calc(50% - 7.5px);
-    height: 280px;
-  }
-  @media (max-width: 350px) {
-    width: 100%;
-    height: 280px;
-  }
+
 `;
 
 const ProductImage = styled.div`
@@ -89,10 +83,16 @@ type Props = {
 };
 
 const ProductItem: React.FC<Props> = ({ product }) => {
+  const { setPath } = useStore();
   const router = useRouter();
 
   return (
-    <Container onClick={() => router.push(`/${product.slug}`)}>
+    <Container
+      onClick={() => {
+        setPath([]);
+        router.push(`/${product.slug}`);
+      }}
+    >
       <ProductImage>
         <Image
           fill
