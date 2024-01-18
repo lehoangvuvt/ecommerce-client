@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import styled from "styled-components";
 
-const Container = styled.div`
+const ContainerDesktop = styled.div`
   width: 100%;
   display: flex;
   flex-flow: column wrap;
@@ -12,6 +12,43 @@ const Container = styled.div`
   justify-content: center;
   @media (max-width: 768px) {
     padding: 20px;
+  }
+`;
+
+const MobileModal = styled.div`
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  bottom: 0%;
+  z-index: 100;
+  display: flex;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: flex-end;
+  backdrop-filter: blur(1.5px);
+  &.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  &.close {
+    transition: opacity 0s 0.4s;
+    opacity: 0;
+    pointer-events: none;
+  }
+`;
+
+const ContainerMobile = styled.div`
+  width: 100%;
+  height: 80%;
+  background-color: white;
+  border-radius: 5px 5px 0px 0px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
+  transition: transform 0.4s ease;
+  &.open {
+    transform: translateY(0%);
+  }
+  &.close {
+    transform: translateY(100%);
   }
 `;
 
@@ -106,7 +143,7 @@ type Props = {
   onLeaveAtrr: () => void;
 };
 
-const Variances: React.FC<Props> = ({
+const VariancesDesktop: React.FC<Props> = ({
   selectedVariance,
   attributes,
   setVariance,
@@ -124,7 +161,7 @@ const Variances: React.FC<Props> = ({
   }, [attributes]);
 
   return (
-    <Container>
+    <ContainerDesktop>
       <AttributeSelector>
         <AttributeName>
           {attributes && attributes.mainAttribute.name}
@@ -172,8 +209,8 @@ const Variances: React.FC<Props> = ({
             ))}
         </AttributeValues>
       </AttributeSelector>
-    </Container>
+    </ContainerDesktop>
   );
 };
 
-export default Variances;
+export default VariancesDesktop;

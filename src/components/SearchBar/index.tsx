@@ -6,6 +6,7 @@ import { FormEvent, useEffect, useState } from "react";
 import useStore from "@/store/store";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useScreenWidth from "@/hooks/useScreenWidth";
+import BackButton from "../BackButton";
 
 const DesktopSearchBar = styled.form`
   width: 90%;
@@ -138,6 +139,8 @@ const MobileSearchBarInput = styled.input`
   border-radius: 4px;
 `;
 
+const noBackBtnMobileRoutes = ["/"];
+
 const SearchBar = () => {
   const { filters, addFilterValues, setNewFilters } = useStore();
   const [searchText, setSearchText] = useState("");
@@ -176,6 +179,14 @@ const SearchBar = () => {
     }
   }, [searchParams]);
 
+  const handleOnBack = () => {
+    switch (pathname) {
+      case "/search":
+        window.location.href = "/";
+        break;
+    }
+  };
+
   return deviceType === "desktop" ? (
     <DesktopSearchBar onSubmit={onSubmit}>
       <SearchIconContainer>
@@ -191,10 +202,29 @@ const SearchBar = () => {
   ) : (
     <MobileSearchBar onSubmit={onSubmit}>
       <div
-        onClick={() => setOpenMobileSearchBar(true)}
-        style={{ height: "100%", display: "flex", alignItems: "center" }}
+        style={{
+          height: "24px",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingRight: '10px'
+        }}
       >
-        <SearchIcon color="inherit" fontSize="inherit" />
+        <BackButton
+          customBackFn={handleOnBack}
+          style={{
+            opacity: !noBackBtnMobileRoutes.includes(pathname) ? "1" : "0",
+            pointerEvents: !noBackBtnMobileRoutes.includes(pathname)
+              ? "auto"
+              : "none",
+          }}
+        />
+        <SearchIcon
+          onClick={() => setOpenMobileSearchBar(true)}
+          color="inherit"
+          fontSize="inherit"
+        />
       </div>
       {isOpenMobileSearchBar && (
         <MobileSearchBarContainer>

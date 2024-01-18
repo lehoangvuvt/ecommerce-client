@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import Header from "./Header";
 import styled from "styled-components";
 import { usePathname } from "next/navigation";
@@ -8,6 +8,9 @@ import Footer from "./Footer";
 import useScreenWidth from "@/hooks/useScreenWidth";
 import SubMenuMobile from "./SubMenuMobile";
 import Path from "./Path";
+import { UserService } from "@/services/user.service";
+import useStore from "@/store/store";
+import Authentication from "./Authentication";
 
 const Container = styled.div`
   position: absolute;
@@ -25,8 +28,8 @@ type Props = {
 };
 const noHeaderRoutes: string[] = ["/login"];
 const noFooterRoutes: string[] = [];
-const noPathRoutes: string[] = ["/", "/login", "/sign-up", "/cart"];
-const withSubMenuRoutes: string[] = ["/", "/search", "/login", "/sign-up"];
+const noPathRoutes: string[] = ["/", "/login", "/sign-up", "/cart","/check-out"];
+const withSubMenuRoutes: string[] = ["/", "/login", "/sign-up"];
 
 const Layout = ({ children }: Props) => {
   const pathname = usePathname();
@@ -34,6 +37,7 @@ const Layout = ({ children }: Props) => {
 
   return (
     <Container>
+      <Authentication />
       {!noHeaderRoutes.includes(pathname) && <Header />}
       <Content>
         {!noPathRoutes.includes(pathname) && deviceType === "desktop" && (

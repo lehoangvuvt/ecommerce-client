@@ -23,6 +23,7 @@ const useScreenWidth = () => {
       handleResize();
     }
     window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return { deviceType, screenWidth };

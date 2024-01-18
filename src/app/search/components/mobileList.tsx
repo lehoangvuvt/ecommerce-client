@@ -1,11 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ProductsContainer } from "../page";
 import ProductItem from "./productItem";
 import { TProducItem } from "@/types/api.type";
 import { useSearchParams } from "next/navigation";
 import useSearchInfiniteProducts from "@/react-query/hooks/useSearchInfiniteProducts";
+import styled from "styled-components";
+import Spinner from "@/components/Spinner";
+
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+  @media (max-width: 768px) {
+    margin-top: 100px;
+    margin-bottom: 100px;
+    gap: 5px;
+  }
+`;
 
 const MobileList = () => {
   const params = useSearchParams();
@@ -18,6 +31,7 @@ const MobileList = () => {
   const productsContainerRef = useRef<HTMLDivElement>(null);
   const [isEndScroll, setEndScroll] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
 
   useEffect(() => {
     let searchParams: { [key: string]: string } = {};
@@ -32,7 +46,11 @@ const MobileList = () => {
 
   useEffect(() => {
     if (result && result.data.length > 0) {
-      setProducts((prev) => [...prev, ...result.data]);
+      if (currentPage === 0) {
+        setProducts(result.data);
+      } else {
+        setProducts((prev) => [...prev, ...result.data]);
+      }
     }
   }, [result]);
 
@@ -47,32 +65,23 @@ const MobileList = () => {
 
   const handleScrollEnd = (e: any) => {
     if (productsContainerRef && productsContainerRef.current) {
-      const cs = getComputedStyle(productsContainerRef.current);
-      const childCount = productsContainerRef.current.childNodes.length;
-      var paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-      parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
-      var borderY =
-        parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
-
-      const height =
-        productsContainerRef.current.scrollHeight - paddingY - borderY;
-      const triggerHeightCondition =
-        window.scrollY >= height - 100 - 10 * childCount - 80 - 150;
-
-      if (triggerHeightCondition) {
+      if (
+        window.innerHeight + window.scrollY >=
+        productsContainerRef.current.offsetHeight + 100
+      ) {
         setEndScroll(true);
       }
     }
   };
 
   useEffect(() => {
-    if (isEndScroll && result.has_next) {
+    if (isEndScroll && !isLoading) {
       setCurrentPage(currentPage + 1);
     }
   }, [isEndScroll]);
 
   useEffect(() => {
-    if (currentPage > 0) {
+    if (currentPage > 0 && currentPage < result.total_page) {
       const updatedSearchParams = Object.assign({}, searchParams);
       updatedSearchParams["page"] = currentPage.toString();
       setSearchParams(updatedSearchParams);
@@ -81,12 +90,25 @@ const MobileList = () => {
   }, [currentPage]);
 
   return (
-    <ProductsContainer ref={productsContainerRef}>
+    <Container ref={productsContainerRef}>
       {products &&
         products.map((product, pIndex) => (
           <ProductItem key={pIndex} product={product} />
         ))}
-    </ProductsContainer>
+      {isLoading && (
+        <div
+          style={{
+            width: "100%",
+            height: "80px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Spinner />
+        </div>
+      )}
+    </Container>
   );
 };
 

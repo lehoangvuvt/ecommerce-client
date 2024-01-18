@@ -2,14 +2,15 @@
 
 import { TProductDetails } from "@/types/api.type";
 import styled from "styled-components";
-import { TAttribute } from "./components/variances";
+import { TAttribute } from "./components/variancesDesktop";
 import Overview from "./components/overview";
 import Details from "./components/details";
 import { useEffect, useState } from "react";
-import useStore from "@/store/store";
+import useStore, { TPathItem } from "@/store/store";
 import useScreenWidth from "@/hooks/useScreenWidth";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useRouter } from "next/navigation";
+import ROUTES from "@/types/routes";
+import MobilePageHeader from "@/components/MobilePageHeader";
+import CartButton from "@/components/CartButton";
 
 const Container = styled.div`
   display: flex;
@@ -23,42 +24,6 @@ const Container = styled.div`
   }
 `;
 
-const ProductMobileHeader = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 50px;
-  width: 100%;
-  z-index: 100;
-  display: flex;
-  flex-flow: row;
-  padding: 0px 10px;
-  align-items: center;
-`;
-
-const BackButton = styled.button`
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  cursor: pointer;
-`;
-
-const ProductName = styled.div`
-  width: calc(100% - 45px - 20px);
-  padding: 0px 5px;
-  box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 600;
-  font-size: 16px;
-`;
-
 type Props = {
   details: TProductDetails;
   attributes: TAttribute;
@@ -67,50 +32,37 @@ type Props = {
 const ProductView: React.FC<Props> = ({ details, attributes }) => {
   const { setPath } = useStore();
   const { deviceType } = useScreenWidth();
-  const [headerOpacity, setHeaderOpacity] = useState(0);
-  const router = useRouter();
 
   useEffect(() => {
-    const categoriesPath = details.category_path.map((item) => {
-      return item.name;
+    const categoryPaths: TPathItem[] = details.category_path.map((item) => {
+      return {
+        isLink: true,
+        name: item.name,
+        route: ROUTES.SEARCH,
+        value: `?c=${item.slug}`,
+      };
     });
-    const path = ["Home", ...categoriesPath, details.product_name];
-    setPath(path);
+    const paths: TPathItem[] = [
+      { isLink: true, name: "Home", route: ROUTES.HOME, value: "" },
+      ...categoryPaths,
+      {
+        isLink: false,
+        name: details.product_name,
+        route: ROUTES.PRODUCT_DETAILS,
+        value: details.slug,
+      },
+    ];
+    setPath(paths);
   }, []);
-
-  useEffect(() => {
-    if (deviceType === "mobile") {
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
-  }, [deviceType]);
-
-  const handleScroll = () => {
-    const scrollValToFull = 400;
-    const opacity =
-      window.scrollY >= scrollValToFull ? 1 : window.scrollY / scrollValToFull;
-    setHeaderOpacity(opacity);
-  };
 
   return (
     <Container>
       {deviceType === "mobile" && (
-        <ProductMobileHeader
-          style={{
-            backgroundColor: `rgba(255,255,255,${headerOpacity})`,
-          }}
-        >
-          <BackButton onClick={() => router.back()}>
-            <ArrowBackIcon color="inherit" fontSize="inherit" />
-          </BackButton>
-          <ProductName
-            style={{
-              color: `rgba(0,0,0,${headerOpacity})`,
-            }}
-          >
-            {details.product_name}
-          </ProductName>
-        </ProductMobileHeader>
+        <MobilePageHeader
+          headerText={details.product_name}
+          effectOn
+          rightItem={<CartButton style={{ transform: "scale(0.925)" }} />}
+        />
       )}
       <Overview attributes={attributes} details={details} />
       <Details details={details} />

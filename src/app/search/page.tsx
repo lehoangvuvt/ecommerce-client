@@ -16,6 +16,7 @@ import useSearchFilters from "@/react-query/hooks/useSearchFilters";
 import Spinner from "@/components/Spinner";
 import { TProducItem } from "@/types/api.type";
 import MobileList from "./components/mobileList";
+import ROUTES from "@/types/routes";
 
 const Container = styled.div`
   width: 80%;
@@ -56,7 +57,7 @@ const Right = styled.div`
   }
 `;
 
-export const ProductsContainer = styled.div`
+const ProductsContainer = styled.div`
   width: 100%;
   display: flex;
   flex-flow: row wrap;
@@ -98,7 +99,7 @@ const EmptyContainer = styled.div`
 
 const MobileFiltersContainer = styled.div`
   width: 100%;
-  height: calc(100% - 50px);
+  height: 100%;
   position: fixed;
   top: 0;
   left: 0;
@@ -199,7 +200,17 @@ const SearchView = ({
       const values = searchParams[key].split(",");
       addFilterValues(key, values);
     }
-    setPath(["Home", searchParams["keyword"]]);
+    setPath([
+      { name: "Home", route: ROUTES.HOME, value: "", isLink: true },
+      {
+        name: `Search result for "${
+          searchParams["keyword"] ?? searchParams["c"]
+        }"`,
+        route: ROUTES.SEARCH,
+        value: searchParams["keyword"],
+        isLink: false,
+      },
+    ]);
   }, [searchParams]);
 
   useEffect(() => {

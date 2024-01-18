@@ -3,12 +3,13 @@
 import SearchBar from "@/components/SearchBar";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import logo from "/public/icon/logo.png";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import useScreenWidth from "@/hooks/useScreenWidth";
-import Link from "next/link";
+import SubHeader from "./components/subHeader";
+import CartButton from "@/components/CartButton";
+import { UserService } from "@/services/user.service";
 
 const headerHeight = 150;
 
@@ -37,45 +38,7 @@ const MainContainer = styled.div`
   align-items: center;
 `;
 
-const SubContainer = styled.div`
-  height: 40px;
-  width: 90%;
-  display: flex;
-  align-items: center;
-`;
-
-const SubContainerLeft = styled.div`
-  height: 100%;
-  width: 50%;
-  display: flex;
-  align-items: center;
-`;
-
-const SubContainerRight = styled.div`
-  height: 100%;
-  width: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const SubContainerLink = styled(Link)`
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px 10px;
-  font-size: 13px;
-  position: relative;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.6);
-  cursor: pointer;
-  &:hover {
-    color: rgba(0, 0, 0, 1);
-  }
-`;
-
-const Line = styled.div`
+export const Line = styled.div`
   height: 50%;
   width: 1px;
   background: rgba(0, 0, 0, 0.4);
@@ -198,6 +161,13 @@ const Header = () => {
     }
   };
 
+  const handleLogout = async () => {
+    const response = await UserService.logout();
+    if (response) {
+      window.location.reload();
+    }
+  };
+
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
   }, [pathname]);
@@ -251,14 +221,7 @@ const Header = () => {
     return (
       <HeaderCenterContainer>
         <SearchBar />
-        <ShoppingCartIcon
-          color="inherit"
-          fontSize="inherit"
-          style={{
-            fontSize: "23px",
-            margin: "auto",
-          }}
-        />
+        <CartButton />
       </HeaderCenterContainer>
     );
   };
@@ -266,7 +229,7 @@ const Header = () => {
   const HeaderRight = () => {
     return (
       <HeaderRightContainer>
-        <ShoppingCartIcon color="inherit" fontSize="inherit" />
+        <CartButton />
       </HeaderRightContainer>
     );
   };
@@ -275,24 +238,8 @@ const Header = () => {
     return (
       <>
         <FullHeader className={isHidden ? "hide" : "show"}>
-          <SubContainer>
-            <SubContainerLeft>
-              <SubContainerLink href="/">Seller Centre</SubContainerLink>
-              <Line />
-              <SubContainerLink href="/">Download</SubContainerLink>
-              <Line />
-              <SubContainerLink href="/" className="last">
-                Follow us
-              </SubContainerLink>
-            </SubContainerLeft>
-            <SubContainerRight>
-              <SubContainerLink href="/sign-up">Sign Up</SubContainerLink>
-              <Line />
-              <SubContainerLink href="/login" className="last">
-                Login
-              </SubContainerLink>
-            </SubContainerRight>
-          </SubContainer>
+          <button onClick={() => handleLogout()}>Logout</button>
+          <SubHeader />
           <MainContainer>
             <HeaderLeftDesktop />
             <HeaderCenterDesktop />

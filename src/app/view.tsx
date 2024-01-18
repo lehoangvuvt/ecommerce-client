@@ -23,7 +23,7 @@ const HomeView = () => {
   return (
     <Container style={{ display: "flex", alignItems: "center" }}>
       <Carousel
-        style={{ height: "100vh" }}
+        style={{ width: "89%", aspectRatio: 4, marginTop: '20px' }}
         images={[banner0.src, banner1.src, banner2.src, banner3.src]}
       />
     </Container>

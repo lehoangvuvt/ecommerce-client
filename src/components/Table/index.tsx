@@ -10,7 +10,6 @@ const ContainerDesktop = styled.div`
   display: flex;
   flex-flow: column;
   box-sizing: border-box;
-  margin: auto;
 `;
 
 const Header = styled.div`
@@ -22,6 +21,7 @@ const Header = styled.div`
   display: flex;
   flex-flow: row;
   margin-bottom: 10px;
+  border: 1px solid rgba(0,0,0,0.05);
 `;
 
 const HeaderCol = styled.div<{ $flex: number }>`
@@ -43,6 +43,7 @@ const Rows = styled.div`
   background: white;
   border-radius: 2px;
   box-sizing: border-box;
+  border: 1px solid rgba(0,0,0,0.05);
 `;
 
 const ItemRow = styled.div`
@@ -100,13 +101,13 @@ const TableItemMobile = styled.div`
   box-sizing: border-box;
   gap: 10px;
   border-radius: 5px;
-  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.05);
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
 `;
 
 const ItemMobileField = styled.div`
   width: 100%;
   display: flex;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
   padding: 5px 20px 15px 20px;
 `;
@@ -206,19 +207,49 @@ const Table: React.FC<Props> = ({ columns, rows, mode = "desktop" }) => {
 
   const handleSort = (field: string, sortType: "asc" | "desc") => {
     const sortedItems = structuredClone(items);
-    switch (sortType) {
-      case "asc":
-        sortedItems.sort((a, b) => a[field] - b[field]);
-        break;
-      case "desc":
-        sortedItems.sort((a, b) => b[field] - a[field]);
-        break;
+    if (currentSortType) {
+      if (currentSortType.field !== field) {
+        switch (sortType) {
+          case "asc":
+            sortedItems.sort((a, b) => a[field] - b[field]);
+            break;
+          case "desc":
+            sortedItems.sort((a, b) => b[field] - a[field]);
+            break;
+        }
+        setCurrentSortType({
+          field,
+          type: sortType,
+        });
+      } else {
+        switch (currentSortType.type) {
+          case "asc":
+            sortedItems.sort((a, b) => b[field] - a[field]);
+            break;
+          case "desc":
+            sortedItems.sort((a, b) => a[field] - b[field]);
+            break;
+        }
+        setCurrentSortType({
+          field,
+          type: currentSortType.type === "asc" ? "desc" : "asc",
+        });
+      }
+    } else {
+      switch (sortType) {
+        case "asc":
+          sortedItems.sort((a, b) => a[field] - b[field]);
+          break;
+        case "desc":
+          sortedItems.sort((a, b) => b[field] - a[field]);
+          break;
+      }
+      setCurrentSortType({
+        field,
+        type: sortType,
+      });
     }
     setItems(sortedItems);
-    setCurrentSortType({
-      field,
-      type: sortType,
-    });
   };
 
   const renderDesktop = () => {

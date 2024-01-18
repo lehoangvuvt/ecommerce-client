@@ -6,11 +6,16 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import Variances, { TAttribute } from "./variances";
+import Variances, { TAttribute } from "./variancesDesktop";
 import Price from "./price";
 import QuantityInput from "@/components/QuantityInput";
 import MyButton from "@/components/Button";
 import useScreenWidth from "@/hooks/useScreenWidth";
+import { UserService } from "@/services/user.service";
+import useStore from "@/store/store";
+import { useRouter } from "next/navigation";
+import VariancesDesktop from "./variancesDesktop";
+import VariancesMobile from "./variancesMobile";
 
 const Container = styled.div`
   width: 78%;
@@ -95,6 +100,7 @@ const ProductTitle = styled.div`
     text-align: center;
     width: 100%;
     font-size: 16px;
+    padding: 0px 10px;
   }
 `;
 
@@ -169,7 +175,31 @@ type Props = {
   attributes: TAttribute;
 };
 
+export const getVarianceInfo = (
+  variance: { main: string; sub: string },
+  details: TProductDetails
+) => {
+  let price = 0;
+  let qty = 0;
+
+  for (let key in details.product_variance) {
+    const mainAttributeValue = key.split(":")[0];
+    for (let subKey in details.product_variance[key]) {
+      const subAttributeValue = subKey.split(":")[0];
+      if (
+        mainAttributeValue === variance.main &&
+        subAttributeValue === variance.sub
+      ) {
+        price = details.product_variance[key][subKey].price;
+        qty = details.product_variance[key][subKey].qty;
+      }
+    }
+  }
+  return { price, qty };
+};
+
 const Overview: React.FC<Props> = ({ details, attributes }) => {
+  const router = useRouter();
   const { deviceType } = useScreenWidth();
   const [selectedVariance, setSelectedVariance] = useState<{
     main: string;
@@ -177,26 +207,42 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
   } | null>(null);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
+  const { userInfo, setUserInfo } = useStore();
+  const [OpenMobileVarianceModal, setOpenMobileVarianceModal] = useState<
+    "add" | "buy" | "close"
+  >("close");
 
-  const getVarianceInfo = () => {
-    let price = 0;
-    let qty = 0;
-    if (selectedVariance) {
-      for (let key in details.product_variance) {
-        const mainAttributeValue = key.split(":")[0];
-        for (let subKey in details.product_variance[key]) {
-          const subAttributeValue = subKey.split(":")[0];
-          if (
-            mainAttributeValue === selectedVariance.main &&
-            subAttributeValue === selectedVariance.sub
-          ) {
-            price = details.product_variance[key][subKey].price;
-            qty = details.product_variance[key][subKey].qty;
-          }
+  const addToCart = async () => {
+    if (!selectedVariance) return;
+    const selectedMainAttrVal = selectedVariance.main;
+    const selectedSubAttrVal = selectedVariance.sub;
+    let selectedVarianceId = "";
+    for (let key1 in details.product_variance) {
+      const mainAtrrValue = key1.split(":")[0];
+      for (let key2 in details.product_variance[key1]) {
+        const subAtrrValue = key2.split(":")[0];
+        const varianceId = details.product_variance[key1][key2].id;
+        if (
+          selectedMainAttrVal === mainAtrrValue &&
+          subAtrrValue === selectedSubAttrVal
+        ) {
+          selectedVarianceId = varianceId;
         }
       }
     }
-    return { price, qty };
+    if (selectedVarianceId.length > 0) {
+      const updatedCart = await UserService.addToCart(selectedVarianceId, qty);
+      if (updatedCart) {
+        const updatedUserInfo = structuredClone(userInfo);
+        if (updatedUserInfo && updatedUserInfo.cart) {
+          updatedUserInfo.cart = updatedCart;
+          setUserInfo(updatedUserInfo);
+        }
+      }
+    }
+    if (OpenMobileVarianceModal === "add") {
+      setOpenMobileVarianceModal("close");
+    }
   };
 
   const handleSetVariance = (type: "main" | "sub", value: string) => {
@@ -207,7 +253,7 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
 
   useEffect(() => {
     if (selectedVariance) {
-      const maxQty = getVarianceInfo().qty;
+      const maxQty = getVarianceInfo(selectedVariance, details).qty;
       if (qty > maxQty) setQty(maxQty);
     }
   }, [qty, selectedVariance]);
@@ -239,16 +285,48 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
       <Right>
         <ProductTitle>{details.product_name}</ProductTitle>
         <ProductPrice>
-          <Price currentPrice={getVarianceInfo().price} />
+          <Price
+            currentPrice={
+              selectedVariance
+                ? getVarianceInfo(selectedVariance, details).price
+                : 0
+            }
+          />
         </ProductPrice>
-        <Variances
-          attributes={attributes}
-          selectedVariance={selectedVariance}
-          setVariance={handleSetVariance}
-          setInitVariance={(initVariance) => setSelectedVariance(initVariance)}
-          onHoverMainAtrr={(imageURL) => setCurrentImage(imageURL)}
-          onLeaveAtrr={() => setCurrentImage(null)}
-        />
+        {deviceType === "desktop" && (
+          <VariancesDesktop
+            attributes={attributes}
+            selectedVariance={selectedVariance}
+            setVariance={handleSetVariance}
+            setInitVariance={(initVariance) =>
+              setSelectedVariance(initVariance)
+            }
+            onHoverMainAtrr={(imageURL) => setCurrentImage(imageURL)}
+            onLeaveAtrr={() => setCurrentImage(null)}
+          />
+        )}
+        {deviceType === "mobile" && (
+          <VariancesMobile
+            onClickModalSubmitBtn={async (type) => {
+              if (type === "add") return addToCart();
+              await addToCart();
+              router.push("/cart");
+            }}
+            setQty={(qty) => setQty(qty)}
+            qty={qty}
+            closeModal={() => setOpenMobileVarianceModal("close")}
+            openMobileModal={OpenMobileVarianceModal}
+            attributes={attributes}
+            selectedVariance={selectedVariance}
+            setVariance={handleSetVariance}
+            setInitVariance={(initVariance) =>
+              setSelectedVariance(initVariance)
+            }
+            details={details}
+            onHoverMainAtrr={(imageURL) => setCurrentImage(imageURL)}
+            onLeaveAtrr={() => setCurrentImage(null)}
+          />
+        )}
         {deviceType === "desktop" && (
           <>
             <OverviewSection>
@@ -259,7 +337,10 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
                     style={{ height: "35px" }}
                     onDecrease={() => qty > 1 && setQty(qty - 1)}
                     onIncrease={() => {
-                      if (qty < getVarianceInfo().qty) {
+                      if (!selectedVariance) return;
+                      if (
+                        qty < getVarianceInfo(selectedVariance, details).qty
+                      ) {
                         setQty(qty + 1);
                       }
                     }}
@@ -274,7 +355,12 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
                     }}
                     quantity={qty}
                   />
-                  <p>{getVarianceInfo().qty} products available</p>
+                  <p>
+                    {selectedVariance
+                      ? getVarianceInfo(selectedVariance, details).qty
+                      : 0}{" "}
+                    products available
+                  </p>
                 </QuantitySelector>
               </OverviewSectionContent>
             </OverviewSection>
@@ -282,7 +368,7 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
               <OverviewSectionContent className="buttons-container">
                 <MyButton
                   height="45px"
-                  onClick={() => {}}
+                  onClick={() => addToCart()}
                   background="rgb(255,0,0,0.05)"
                   fontColor="red"
                   fontSize="14px"
@@ -291,12 +377,15 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
                   <AddShoppingCartIcon
                     style={{ fontSize: "20px" }}
                     color="inherit"
-                  />{" "}
+                  />
                   Add To Cart
                 </MyButton>
                 <MyButton
                   height="45px"
-                  onClick={() => {}}
+                  onClick={async () => {
+                    await addToCart();
+                    router.push("/cart");
+                  }}
                   background="red"
                   fontColor="white"
                   fontSize="14px"
@@ -312,7 +401,7 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
         <AddToCartMobileFooter>
           <MyButton
             height="100%"
-            onClick={() => {}}
+            onClick={() => setOpenMobileVarianceModal("add")}
             background="white"
             fontColor="red"
             fontSize="13px"
@@ -323,7 +412,7 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
           </MyButton>
           <MyButton
             height="100%"
-            onClick={() => {}}
+            onClick={() => setOpenMobileVarianceModal("buy")}
             background="red"
             fontColor="white"
             fontSize="13px"

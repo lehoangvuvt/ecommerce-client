@@ -5,7 +5,9 @@ import logo from "/public/icon/logo.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import TextInput from "@/components/TextInput";
-import { useState } from "react";
+import { FormEvent, FormEventHandler, useState } from "react";
+import { UserService } from "@/services/user.service";
+import useStore from "@/store/store";
 
 const Container = styled.div`
   width: 100%;
@@ -81,6 +83,16 @@ const Page = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [pw, setPw] = useState("");
+  const { setUserInfo } = useStore();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const response = await UserService.login(username, pw);
+    if (response) {
+      setUserInfo(response);
+      router.push("/");
+    }
+  };
 
   return (
     <Container>
@@ -97,9 +109,20 @@ const Page = () => {
         <HeaderTitle>Log In</HeaderTitle>
       </Header>
       <Main>
-        <LoginForm>
-          <TextInput maxLength={10} placeholder="Enter username" value={username} onChange={setUsername} />
-          <TextInput  placeholder="Enter password" type="password" value={pw} onChange={setPw} />
+        <LoginForm onSubmit={handleSubmit}>
+          <TextInput
+            maxLength={10}
+            placeholder="Enter username"
+            value={username}
+            onChange={setUsername}
+          />
+          <TextInput
+            placeholder="Enter password"
+            type="password"
+            value={pw}
+            onChange={setPw}
+          />
+          <button type="submit">Login</button>
         </LoginForm>
       </Main>
     </Container>

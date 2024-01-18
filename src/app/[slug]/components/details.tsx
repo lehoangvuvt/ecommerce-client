@@ -22,6 +22,7 @@ const Container = styled.div`
     width: 100%;
     border: none;
     border-radius: 0px;
+    margin-top: -20px;
   }
 `;
 

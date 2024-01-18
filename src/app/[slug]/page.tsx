@@ -1,6 +1,6 @@
 import { ProductService } from "@/services/product.service";
 import ProductView from "./view";
-import { TAttribute } from "./components/variances";
+import { TAttribute } from "./components/variancesDesktop";
 
 const Page = async ({ params }: { params: { slug: string } }) => {
   const productDetails = await ProductService.getProductDetails(params.slug);

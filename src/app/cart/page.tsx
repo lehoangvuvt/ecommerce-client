@@ -1,22 +1,32 @@
 "use client";
 
 import MyButton from "@/components/Button";
+import Checkbox from "@/components/Checkbox";
+import MobilePageHeader from "@/components/MobilePageHeader";
 import Table, { TColumn } from "@/components/Table";
 import useScreenWidth from "@/hooks/useScreenWidth";
+import { UserService } from "@/services/user.service";
+import useStore from "@/store/store";
 import { convertNumberToCurrencyString } from "@/utils/string.utils";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
   width: 80%;
-  padding-top: 10px;
+  padding-top: 40px;
   margin: 0 auto;
   gap: 15px;
   display: flex;
-  flex-flow: column;
+  flex-flow: column wrap;
+  justify-content: flex-start;
+  min-height: calc(100vh - 150px);
+  @media (max-width: 1000px) {
+    width: 90%;
+  }
   @media (max-width: 768px) {
-    width: 95%;
+    width: 100%;
   }
 `;
 
@@ -27,10 +37,16 @@ const CheckoutContainer = styled.div`
   flex-flow: row;
   background-color: white;
   margin-bottom: 20px;
+  @media (max-width: 768px) {
+    flex-flow: column;
+  }
 `;
 
 const CheckoutLeft = styled.div`
   width: 50%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const CheckoutRight = styled.div`
@@ -39,79 +55,48 @@ const CheckoutRight = styled.div`
   align-items: center;
   justify-content: flex-end;
   box-sizing: border-box;
+  gap: 20px;
+  font-size: 15px;
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 14px;
+  }
 `;
 
-const rows = [
-  {
-    id: "product_1",
-    productDetails: {
-      productName: "product 1",
-      productImage:
-        "https://down-vn.img.susercontent.com/file/vn-11134207-23030-ng84drd6glov2b",
-    },
-    price: 1000,
-    quantity: 10,
-    total_price: 1000 * 10,
-  },
-  {
-    id: "product_2",
-    productDetails: {
-      productName: "product 2",
-      productImage:
-        "https://down-vn.img.susercontent.com/file/vn-11134207-23030-ng84drd6glov2b",
-    },
-    price: 2000,
-    quantity: 11,
-    total_price: 2000 * 11,
-  },
-  {
-    id: "product_3",
-    productDetails: {
-      productName: "product 3",
-      productImage:
-        "https://down-vn.img.susercontent.com/file/vn-11134207-23030-ng84drd6glov2b",
-    },
-    price: 3000,
-    quantity: 12,
-    total_price: 3000 * 12,
-  },
-  {
-    id: "product_4",
-    productDetails: {
-      productName: "product 4",
-      productImage:
-        "https://down-vn.img.susercontent.com/file/vn-11134207-23030-ng84drd6glov2b",
-    },
-    price: 4000,
-    quantity: 13,
-    total_price: 4000 * 13,
-  },
-];
-
 const Cart = () => {
-  const { deviceType } = useScreenWidth();
-  const [data, setData] = useState<{ [key: string]: any }[]>(rows);
+  const { userInfo, setUserInfo } = useStore();
+  const [data, setData] = useState<{ [key: string]: any }[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const { deviceType } = useScreenWidth();
+  const router = useRouter();
 
-  const deleteItem = (rowIndex: number) => {
-    if (data.length > 1) {
-      setData((prevData) =>
-        prevData.filter((item, index) => index !== rowIndex)
-      );
-    } else {
-      setData([]);
+  useEffect(() => {
+    if (userInfo && userInfo.cart && userInfo.cart.cart_items) {
+      setData(userInfo.cart.cart_items);
+    }
+  }, [userInfo]);
+
+  const handleRemoveFromCart = async (productVarianceId: string) => {
+    const updatedCart = await UserService.removeFromCart(productVarianceId);
+    if (updatedCart) {
+      const updatedUserInfo = structuredClone(userInfo);
+      if (updatedUserInfo && updatedUserInfo.cart) {
+        updatedUserInfo.cart = updatedCart;
+        setUserInfo(updatedUserInfo);
+      }
     }
   };
 
   const columns: TColumn[] = [
     {
-      field: "productDetails",
+      field: "product",
       headerName: "Product",
-      flex: 0.5,
+      flex: 0.6,
       customHeader: (headerName: string, field: string) => {
         return (
-          <div>
-            <input
+          <div style={{ height: "100%", display: "flex", gap: "10px" }}>
+            <Checkbox
               checked={selectedProductIds.length === data.length}
               onChange={() => {
                 selectedProductIds.length < data.length
@@ -122,7 +107,6 @@ const Cart = () => {
                     )
                   : setSelectedProductIds([]);
               }}
-              type="checkbox"
             />
             {headerName}
           </div>
@@ -137,10 +121,11 @@ const Cart = () => {
               display: "flex",
               flexFlow: "row wrap",
               alignItems: "center",
-              gap: "10px",
+              gap: "15px",
+              boxSizing: "border-box",
             }}
           >
-            <input
+            <Checkbox
               onChange={() =>
                 selectedProductIds.includes(rowValue.id)
                   ? setSelectedProductIds((prev) =>
@@ -149,17 +134,36 @@ const Cart = () => {
                   : setSelectedProductIds((prev) => [...prev, rowValue.id])
               }
               checked={selectedProductIds.includes(rowValue.id)}
-              type="checkbox"
             />
             <Image
-              src={value.productImage}
+              src={rowValue.image}
               alt="product-image"
-              width={80}
-              height={80}
+              width={65}
+              height={65}
             />
-            <p>{value.productName}</p>
+            <p
+              onClick={() => router.push(`/${value.slug}`)}
+              className="hover:underline cursor-pointer"
+              style={{
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                flex: 1,
+              }}
+            >
+              {value.product_name}
+            </p>
           </div>
         );
+      },
+    },
+    {
+      field: "variance",
+      headerName: "",
+      sortable: false,
+      flex: 0.15,
+      customRender: (value, rowIndex, field, rowValue) => {
+        return `${value["main"]["attribute_value"]}, ${value["sub"]["attribute_value"]}`;
       },
     },
     {
@@ -167,7 +171,7 @@ const Cart = () => {
       headerName: "Price",
       sortable: true,
       sortField: "price",
-      flex: 0.125,
+      flex: 0.17,
       customRender: (value, rowIndex, field, rowValue) => {
         return convertNumberToCurrencyString(value);
       },
@@ -177,14 +181,14 @@ const Cart = () => {
       headerName: "Quantity",
       sortField: "quantity",
       sortable: true,
-      flex: 0.125,
+      flex: 0.17,
     },
     {
       field: "total_price",
       headerName: "Total Price",
       sortField: "total_price",
       sortable: true,
-      flex: 0.125,
+      flex: 0.17,
       customRender: (value) => {
         return convertNumberToCurrencyString(value);
       },
@@ -192,15 +196,50 @@ const Cart = () => {
     {
       field: "",
       headerName: "Actions",
-      flex: 0.125,
-      customRender: (value, rowIndex) => {
-        return <button onClick={() => deleteItem(rowIndex)}>Remove</button>;
+      flex: 0.12,
+      customRender: (value, rowIndex, field, rowValue) => {
+        return (
+          <button
+            className="hover:text-[red]"
+            onClick={() =>
+              handleRemoveFromCart(rowValue["product_variance_id"])
+            }
+          >
+            Remove
+          </button>
+        );
       },
     },
   ];
 
+  const getTotalItemsPrice = () => {
+    let total = 0;
+    if (selectedProductIds.length === 0) return total;
+    selectedProductIds.forEach((itemId) => {
+      const item = userInfo?.cart?.cart_items?.find(
+        (item) => item.id === itemId
+      );
+      if (item) {
+        total += item.price * item.quantity;
+      }
+    });
+    return total;
+  };
+
+  const handleCheckout = () => {
+    if (selectedProductIds.length === 0) return;
+    let checkoutParams = "?cart_items=";
+    selectedProductIds.forEach((id) => {
+      checkoutParams += `${id},`;
+    });
+    router.push(
+      "/check-out" + checkoutParams.substring(0, checkoutParams.length - 1)
+    );
+  };
+
   return (
     <Container>
+      {deviceType === "mobile" && <MobilePageHeader headerText="Cart" />}
       {data.length > 0 && (
         <>
           <Table
@@ -211,18 +250,57 @@ const Cart = () => {
           <CheckoutContainer>
             <CheckoutLeft></CheckoutLeft>
             <CheckoutRight>
-              Total ({selectedProductIds.length}{" "}
-              {selectedProductIds.length > 1 ? "items" : "item"})
-              <MyButton
-                background="red"
-                fontColor="white"
-                onClick={() => {}}
-                width="30%"
-                height="38px"
-                fontSize="14px"
-              >
-                Check Out
-              </MyButton>
+              {deviceType === "desktop" && (
+                <>
+                  <span>
+                    Total ({selectedProductIds.length}
+                    {selectedProductIds.length > 1 ? " items" : " item"}):&nbsp;
+                    <span className="text-[red] font-[400] text-[20px]">
+                      {convertNumberToCurrencyString(getTotalItemsPrice())}
+                    </span>
+                  </span>
+                  <MyButton
+                    disabled={selectedProductIds.length === 0}
+                    background="red"
+                    fontColor="white"
+                    onClick={() => handleCheckout()}
+                    width="33%"
+                    height="40px"
+                    fontSize="15px"
+                  >
+                    Check Out
+                  </MyButton>
+                </>
+              )}
+
+              {deviceType === "mobile" && (
+                <div className="w-full">
+                  <div
+                    className="w-full mb-[10px]"
+                    style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Total ({selectedProductIds.length}
+                    {selectedProductIds.length > 1 ? " items" : " item"}):&nbsp;
+                    <span className="text-[red] font-[400] text-[20px]">
+                      {convertNumberToCurrencyString(getTotalItemsPrice())}
+                    </span>
+                  </div>
+                  <MyButton
+                    disabled={selectedProductIds.length === 0}
+                    background="red"
+                    fontColor="white"
+                    onClick={() => handleCheckout()}
+                    width="100%"
+                    height="40px"
+                    fontSize="15px"
+                  >
+                    Check Out
+                  </MyButton>
+                </div>
+              )}
             </CheckoutRight>
           </CheckoutContainer>
         </>

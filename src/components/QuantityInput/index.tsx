@@ -37,6 +37,8 @@ const Center = styled(BaseChild)`
     text-align: center;
     color: rgba(0, 0, 0, 0.8);
     user-select: none;
+    outline: none;
+    border:none;
   }
   border-left: 1px solid rgba(0, 0, 0, 0.2);
   border-right: 1px solid rgba(0, 0, 0, 0.2);
