@@ -9,7 +9,6 @@ import { usePathname, useRouter } from "next/navigation";
 import useScreenWidth from "@/hooks/useScreenWidth";
 import SubHeader from "./components/subHeader";
 import CartButton from "@/components/CartButton";
-import { UserService } from "@/services/user.service";
 
 const headerHeight = 150;
 
@@ -161,13 +160,6 @@ const Header = () => {
     }
   };
 
-  const handleLogout = async () => {
-    const response = await UserService.logout();
-    if (response) {
-      window.location.reload();
-    }
-  };
-
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
   }, [pathname]);
@@ -238,7 +230,6 @@ const Header = () => {
     return (
       <>
         <FullHeader className={isHidden ? "hide" : "show"}>
-          <button onClick={() => handleLogout()}>Logout</button>
           <SubHeader />
           <MainContainer>
             <HeaderLeftDesktop />

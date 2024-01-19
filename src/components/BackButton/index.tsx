@@ -1,7 +1,8 @@
 "use client";
 
+import useStore from "@/store/store";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import styled from "styled-components";
 
 const Container = styled.button`
@@ -23,12 +24,14 @@ type Props = {
 
 const BackButton: React.FC<Props> = ({ customBackFn, style }) => {
   const router = useRouter();
+  const pathName = usePathname();
+
+  const handleBack = () => {
+    router.back();
+  };
 
   return (
-    <Container
-      style={style}
-      onClick={() => (customBackFn ? customBackFn() : router.back())}
-    >
+    <Container style={style} onClick={customBackFn ? customBackFn : handleBack}>
       <ArrowBackIcon color="inherit" fontSize="inherit" />
     </Container>
   );

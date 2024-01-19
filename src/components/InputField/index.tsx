@@ -59,12 +59,14 @@ type Props = {
   value: string | null;
   onChange: (value: string) => void;
   style?: React.CSSProperties;
+  type?: "text" | "password" | "number";
 };
 
 const InputField: React.FC<Props> = ({
   onChange,
   title,
   value = null,
+  type = "text",
   style,
 }) => {
   const [isFocus, setFocus] = useState(false);
@@ -83,8 +85,8 @@ const InputField: React.FC<Props> = ({
         {title}
       </Title>
       <Input
+        type={type}
         autoComplete="new-password"
-        type="text"
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
       />

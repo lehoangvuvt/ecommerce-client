@@ -26,7 +26,7 @@ const PathItemNotLink = styled.div`
 `;
 
 const PathItemLink = styled.div`
-  color: blue;
+  color:  #0000EE;
   cursor: pointer;
 `;
 

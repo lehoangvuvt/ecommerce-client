@@ -6,6 +6,9 @@ import { Line } from "..";
 import useStore from "@/store/store";
 import defaultAvatar from "/public/images/misc/default-avatar.jpg";
 import Image from "next/image";
+import Popover from "@/components/Popover";
+import { UserService } from "@/services/user.service";
+import { useRouter } from "next/navigation";
 
 const Container = styled.div`
   height: 40px;
@@ -57,8 +60,47 @@ const UserAvatar = styled.div`
   }
 `;
 
+const UserMenu = styled.div`
+  display: flex;
+  gap: 5px;
+  width: 130px;
+  flex-flow: column;
+`;
+
+const UserMenuItem = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 15px;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+`;
+
 const SubHeader = () => {
   const { userInfo } = useStore();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const response = await UserService.logout();
+    if (response) {
+      window.location.reload();
+    }
+  };
+
+  const renderUserMenu = () => {
+    return (
+      <UserMenu>
+        <UserMenuItem onClick={() => router.push("/me")}>
+          My Account
+        </UserMenuItem>
+        <UserMenuItem onClick={() => handleLogout()}>Logout</UserMenuItem>
+      </UserMenu>
+    );
+  };
 
   return (
     <Container>
@@ -83,15 +125,17 @@ const SubHeader = () => {
           </>
         )}
         {userInfo && (
-          <UserAvatar>
-            <Image
-              alt="user-avatar"
-              src={defaultAvatar.src}
-              width={28}
-              height={28}
-            />
-            {userInfo.username}
-          </UserAvatar>
+          <Popover place="bottom" content={renderUserMenu()}>
+            <UserAvatar>
+              <Image
+                alt="user-avatar"
+                src={defaultAvatar.src}
+                width={28}
+                height={28}
+              />
+              <span style={{ paddingTop: "4.5px" }}>{userInfo.username}</span>
+            </UserAvatar>
+          </Popover>
         )}
       </SubContainerRight>
     </Container>

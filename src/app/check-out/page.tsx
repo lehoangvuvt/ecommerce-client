@@ -49,7 +49,7 @@ const BaseContainer = styled.div`
     border-radius: 0px;
     & > h1 {
       font-size: 16px;
-      margin-bottom: 0px;
+      margin-bottom: 5px;
     }
   }
 `;

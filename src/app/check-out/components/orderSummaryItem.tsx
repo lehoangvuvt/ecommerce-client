@@ -34,7 +34,7 @@ const ProductQuantity = styled.div`
   border-radius: 50%;
   background-color: #df2029;
   color: white;
-  font-size: 12px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;

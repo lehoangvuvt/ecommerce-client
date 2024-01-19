@@ -16,6 +16,9 @@ import useStore from "@/store/store";
 import { useRouter } from "next/navigation";
 import VariancesDesktop from "./variancesDesktop";
 import VariancesMobile from "./variancesMobile";
+import useModal from "@/hooks/useModal";
+import Modal from "@/components/Modal";
+import Spinner from "@/components/Spinner";
 
 const Container = styled.div`
   width: 78%;
@@ -200,6 +203,15 @@ export const getVarianceInfo = (
 
 const Overview: React.FC<Props> = ({ details, attributes }) => {
   const router = useRouter();
+  const {
+    showModal,
+    closeModal,
+    setModalContent,
+    content,
+    isOpenModal,
+    closeAfterSeconds,
+    setCloseAfterSeconds,
+  } = useModal();
   const { deviceType } = useScreenWidth();
   const [selectedVariance, setSelectedVariance] = useState<{
     main: string;
@@ -231,12 +243,39 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
       }
     }
     if (selectedVarianceId.length > 0) {
+      setCloseAfterSeconds(0);
+      setModalContent(
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Spinner bgColor="white" width="100px" />
+        </div>
+      );
+      showModal();
       const updatedCart = await UserService.addToCart(selectedVarianceId, qty);
+      await new Promise((resolve) => setTimeout(() => resolve(true), 1000));
+      closeModal();
       if (updatedCart) {
         const updatedUserInfo = structuredClone(userInfo);
         if (updatedUserInfo && updatedUserInfo.cart) {
           updatedUserInfo.cart = updatedCart;
           setUserInfo(updatedUserInfo);
+          setModalContent(
+            <div
+              className="flex flex-row justify-center items-center w-[250px] h-[80px] bg-[white] mx-auto my-[250px] rounded-[5px] text-[green] font-bold
+            text-[16px]"
+            >
+              Add To Cart Success
+            </div>
+          );
+          setCloseAfterSeconds(2);
+          showModal();
         }
       }
     }
@@ -260,6 +299,12 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
 
   return (
     <Container>
+      <Modal
+        isOpen={isOpenModal}
+        closeModal={closeModal}
+        content={content}
+        closeAfterSeconds={closeAfterSeconds}
+      />
       <Left>
         {currentImage && (
           <CurrentImageContainer>

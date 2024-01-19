@@ -4,10 +4,11 @@ import styled from "styled-components";
 import logo from "/public/icon/logo.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import TextInput from "@/components/TextInput";
-import { FormEvent, FormEventHandler, useState } from "react";
+import { FormEvent, useState } from "react";
 import { UserService } from "@/services/user.service";
 import useStore from "@/store/store";
+import InputField from "@/components/InputField";
+import MyButton from "@/components/Button";
 
 const Container = styled.div`
   width: 100%;
@@ -56,27 +57,35 @@ const Main = styled.div`
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   background: url("https://www.reuters.com/resizer/fQ1zJp9tGQGreUUEtRMP4g8ALBU=/1200x628/smart/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/PRJVXVFTVRMPPCS7FTJM3G3IDI.jpg");
   background-size: cover;
   background-position: center;
   box-sizing: border-box;
   @media (max-width: 768px) {
-    justify-content: center;
+    align-items: flex-end;
   }
 `;
 
 const LoginForm = styled.form`
-  width: 380px;
-  padding: 20px;
+  width: 500px;
+  padding: 50px 30px 50px 30px;
   background: white;
-  height: 400px;
-  margin-right: 15%;
   border-radius: 3px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
   @media (max-width: 768px) {
     margin-right: 0px;
+    height: 100%;
+    border-radius: 0px;
+    box-shadow: none;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 50px 15px 50px 15px;
   }
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  gap: 25px;
 `;
 
 const Page = () => {
@@ -90,7 +99,7 @@ const Page = () => {
     const response = await UserService.login(username, pw);
     if (response) {
       setUserInfo(response);
-      router.push("/");
+      router.back();
     }
   };
 
@@ -110,19 +119,30 @@ const Page = () => {
       </Header>
       <Main>
         <LoginForm onSubmit={handleSubmit}>
-          <TextInput
-            maxLength={10}
-            placeholder="Enter username"
+          <InputField
+            type="text"
             value={username}
             onChange={setUsername}
+            title="Username"
           />
-          <TextInput
-            placeholder="Enter password"
+          <InputField
             type="password"
             value={pw}
             onChange={setPw}
+            title="Password"
           />
-          <button type="submit">Login</button>
+          <MyButton
+            background="red"
+            fontColor="white"
+            width="100%"
+            height="46px"
+            disabled={username.length === 0 || pw.length === 0}
+            onClick={() => {}}
+            fontSize="15px"
+            customStyle={{ borderRadius: "4px" }}
+          >
+            LOG IN
+          </MyButton>
         </LoginForm>
       </Main>
     </Container>
