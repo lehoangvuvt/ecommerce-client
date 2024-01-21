@@ -4,14 +4,7 @@ import styled from "styled-components";
 import ProductItem from "./components/productItem";
 import SearchFilter from "./components/searchFilter";
 import useStore from "@/store/store";
-import {
-  UIEvent,
-  UIEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Paging from "./components/paging";
 import useScreenWidth from "@/hooks/useScreenWidth";
@@ -21,10 +14,8 @@ import Tabs, { TTabItem } from "@/components/Tabs";
 import useSearchProducts from "@/react-query/hooks/useSearchProducts";
 import useSearchFilters from "@/react-query/hooks/useSearchFilters";
 import Spinner from "@/components/Spinner";
-import { TProducItem } from "@/types/api.type";
 import MobileList from "./components/mobileList";
 import ROUTES from "@/types/routes";
-import { CategoryService } from "@/services/category.service";
 
 const Container = styled.div`
   width: 80%;
@@ -195,7 +186,6 @@ const SearchView = ({
     result: searchFilters,
   } = useSearchFilters(searchParams);
   const { addFilterValues, filters, setPath } = useStore();
-  const [isInitial, setIsInitial] = useState(true);
   const router = useRouter();
   const [isOpenMobileFilters, setOpenMobileFilters] = useState(false);
   const sortTabItems: TTabItem[] = [
@@ -207,24 +197,25 @@ const SearchView = ({
 
   useEffect(() => {
     const handlePath = async () => {
-      for (let key in searchParams) {
-        const values = searchParams[key].split(",");
-        addFilterValues(key, values);
-      }
-
       let lastPathValue = "";
-      
+
       if (searchParams["keyword"]) {
         lastPathValue = searchParams["keyword"];
       } else {
         if (searchParams["c"]) {
-          const response = await CategoryService.getCategoryDetailsBySlug(
-            searchParams["c"]
-          );
-          if (response) lastPathValue = response["category_name"];
+          lastPathValue = searchParams["c"]
+            .split("-")
+            .slice(0, -1)
+            .reduce(
+              (prev, curr) =>
+                `${prev.charAt(0).toUpperCase() + prev.substring(1)}${
+                  curr.charAt(0).toUpperCase() + curr.substring(1)
+                } `,
+              ""
+            )
+            .trim();
         }
       }
-      
       setPath([
         { name: "Home", route: ROUTES.HOME, value: "", isLink: true },
         {
@@ -236,6 +227,13 @@ const SearchView = ({
       ]);
     };
     handlePath();
+  }, [searchParams]);
+
+  useEffect(() => {
+    for (let key in searchParams) {
+      const values = searchParams[key].split(",");
+      addFilterValues(key, values);
+    }
   }, []);
 
   const handleFilters = useCallback(() => {
@@ -251,8 +249,9 @@ const SearchView = ({
   }, [filters, router]);
 
   useEffect(() => {
+    if (deviceType === "mobile") return;
     handleFilters();
-  }, [filters, handleFilters]);
+  }, [filters, handleFilters, deviceType]);
 
   const applyFilters = () => {
     handleFilters();
@@ -306,7 +305,21 @@ const SearchView = ({
   };
 
   const setSortType = (sortType: string) => {
-    addFilterValues("sortBy", [sortType]);
+    if (deviceType === "desktop") {
+      addFilterValues("sortBy", [sortType]);
+    } else {
+      addFilterValues("sortBy", [sortType]);
+      const url = new URLSearchParams();
+      for (let key in filters) {
+        const queryKey = key;
+        const value = filters[queryKey]
+          .reduce((prev, curr) => `${prev},${curr}`, "")
+          .substring(1);
+        url.set(queryKey, value);
+      }
+      url.set("sortBy", sortType);
+      router.push("/search?" + url.toString());
+    }
   };
 
   return (

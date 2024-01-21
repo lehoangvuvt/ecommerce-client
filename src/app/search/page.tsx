@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import SearchView from "./view";
 import { monthsInTextShort } from "@/const/others.const";
-import { CategoryService } from "@/services/category.service";
 
 type Props = {
   searchParams: { [key: string]: string };
@@ -16,10 +15,17 @@ export async function generateMetadata({
     title = searchParams["keyword"];
   } else {
     if (searchParams["c"]) {
-      const response = await CategoryService.getCategoryDetailsBySlug(
-        searchParams["c"]
-      );
-      if (response) title = response["category_name"];
+      title = searchParams["c"]
+        .split("-")
+        .slice(0, -1)
+        .reduce(
+          (prev, curr) =>
+            `${prev.charAt(0).toUpperCase() + prev.substring(1)}${
+              curr.charAt(0).toUpperCase() + curr.substring(1)
+            } `,
+          ""
+        )
+        .trim();
     }
   }
 
