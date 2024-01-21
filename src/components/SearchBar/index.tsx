@@ -208,7 +208,7 @@ const SearchBar = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          paddingRight: '10px'
+          paddingRight: "10px",
         }}
       >
         <BackButton

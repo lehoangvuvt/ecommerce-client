@@ -22,6 +22,52 @@ const PopoverContainer = styled.div<{
     scale(0);
   animation: PopoverAppear 0.2s ease forwards;
   transform-origin: top;
+  &::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: white;
+    z-index: 1;
+  }
+  &.top {
+    &::after {
+      bottom: 10px;
+      right: calc(50%);
+      background-color: white;
+      transform: translate(50%, 50%) rotate(45deg);
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
+  &.bottom {
+    &::after {
+      top: 10px;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
+  &.left {
+    &::after {
+      bottom: 50%;
+      right: 10px;
+      transform: translate(50%, 50%) rotate(45deg);
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
+  &.right {
+    &::after {
+      bottom: 50%;
+      left: 10px;
+      background-color: white;
+      transform: translate(-50%, 50%) rotate(45deg);
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
   @keyframes PopoverAppear {
     from {
       transform: translate(
@@ -39,8 +85,10 @@ const PopoverContainer = styled.div<{
 `;
 
 const PopoverContent = styled.div`
+  padding: 7px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: white;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
   margin: 10px;
 `;
 
@@ -102,6 +150,7 @@ const Popover: React.FC<Props> = ({ children, content, place }) => {
           $translateY={translateY}
           $translateX={translateX}
           ref={wrapperRef}
+          className={place}
         >
           <PopoverContent>{content}</PopoverContent>
         </PopoverContainer>

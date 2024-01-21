@@ -24,6 +24,7 @@ const Content = styled.div`
 type Props = {
   children: ReactNode;
 };
+
 const noHeaderRoutes: string[] = ["/login"];
 const noFooterRoutes: string[] = [];
 const noPathRoutes: string[] = [
@@ -38,6 +39,35 @@ const withSubMenuRoutes: string[] = ["/", "/login", "/sign-up"];
 const Layout = ({ children }: Props) => {
   const pathname = usePathname();
   const { deviceType } = useScreenWidth();
+  // const [keys, setKeys] = useState("");
+  // const [isOpen, setOpen] = useState(false);
+
+  // useEffect(() => {
+  //   window.addEventListener("keydown", onkeydown);
+  //   window.addEventListener("keyup", onkeyUp);
+  // }, []);
+
+  // const onkeydown = (e: KeyboardEvent) => {
+  //   if (e.key === "Control") {
+  //     setKeys("control");
+  //   }
+  //   if (e.key === "m") {
+  //     setKeys((prevKeys) => prevKeys + "m");
+  //   }
+  // };
+
+  // const onkeyUp = (e: KeyboardEvent) => {
+  //   if (e.key === "Control") {
+  //     setKeys("");
+  //   }
+  //   if (e.key === "m") {
+  //     setKeys((prevKeys) => prevKeys.replace("m", ""));
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (keys === "controlm") setOpen(true);
+  // }, [keys]);
 
   return (
     <Container>

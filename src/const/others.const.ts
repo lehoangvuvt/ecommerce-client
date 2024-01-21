@@ -688,4 +688,33 @@ const vietnameCities = [
   },
 ];
 
-export { coutries, vietnameCities };
+const monthsInTextFull = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const monthsInTextShort = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+export { coutries, vietnameCities, monthsInTextFull, monthsInTextShort };

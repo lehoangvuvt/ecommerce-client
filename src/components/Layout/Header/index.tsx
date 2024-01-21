@@ -110,7 +110,7 @@ const HeaderRightContainer = styled.div`
   }
 `;
 
-const MiniHeader = styled.div`
+const MiniHeader = styled.div<{ $isMobile: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -120,7 +120,8 @@ const MiniHeader = styled.div`
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.025);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 8px 0px;
-  animation: stickyHeaderAppear 0.25s ease-in;
+  animation: ${(props) =>
+    props.$isMobile ? "none" : "stickyHeaderAppear 0.25s ease-in"};
   display: flex;
   align-items: center;
   @keyframes stickyHeaderAppear {
@@ -143,12 +144,11 @@ const Header = () => {
   const [isHidden, setIsHidden] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const [isOpenSubMenuMobile, setOpenSubMenuMobile] = useState(false);
   const { deviceType } = useScreenWidth();
 
   const handleScroll = () => {
     if (!disableMiniHeaderRoutes.includes(pathname)) {
-      if (window.scrollY > headerHeight * 1.5) {
+      if (window.scrollY > headerHeight) {
         if (!isHidden) {
           setIsHidden(true);
         }
@@ -175,25 +175,6 @@ const Header = () => {
             fill
             style={{
               objectFit: "contain",
-            }}
-          />
-        </div>
-      </HeaderLeftContainer>
-    );
-  };
-
-  const HeaderLeftMobile = () => {
-    return (
-      <HeaderLeftContainer>
-        <div className="logo">
-          <Image
-            onClick={() => router.push("/")}
-            alt="logo"
-            src={logo}
-            fill
-            style={{
-              objectFit: "contain",
-              objectPosition: "center",
             }}
           />
         </div>
@@ -238,7 +219,7 @@ const Header = () => {
           </MainContainer>
         </FullHeader>
         {isHidden && (
-          <MiniHeader>
+          <MiniHeader $isMobile={false}>
             <HeaderLeftDesktop />
             <HeaderCenterDesktop />
             <HeaderRight />
@@ -250,7 +231,7 @@ const Header = () => {
 
   const renderMobileHeader = () => {
     return (
-      <MiniHeader>
+      <MiniHeader $isMobile={true}>
         {/* <HeaderLeftMobile /> */}
         <HeaderCenterMobile />
       </MiniHeader>

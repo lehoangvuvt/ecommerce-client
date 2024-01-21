@@ -33,4 +33,19 @@ export const CategoryService = {
       return null;
     }
   },
+  async getCategoryDetailsBySlug(slug: string): Promise<any> {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/slug/${slug}`, {
+        method: "GET",
+      });
+      const data = await response.json();
+      if (response.status === 200) {
+        return data;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  },
 };

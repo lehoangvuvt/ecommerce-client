@@ -1,6 +1,28 @@
 import { ProductService } from "@/services/product.service";
 import ProductView from "./view";
 import { TAttribute } from "./components/variancesDesktop";
+import { Metadata } from "next";
+
+type Props = {
+  params: { slug: string };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const productName = params.slug
+    .split("-")
+    .slice(0, -1)
+    .reduce(
+      (prev, curr) =>
+        `${prev.charAt(0).toUpperCase() + prev.substring(1)}${
+          curr.charAt(0).toUpperCase() + curr.substring(1)
+        } `,
+      ""
+    );
+  return {
+    title: productName,
+    description: productName,
+  };
+}
 
 const Page = async ({ params }: { params: { slug: string } }) => {
   const productDetails = await ProductService.getProductDetails(params.slug);

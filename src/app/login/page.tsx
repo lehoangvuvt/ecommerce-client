@@ -72,6 +72,7 @@ const LoginForm = styled.form`
   padding: 50px 30px 50px 30px;
   background: white;
   border-radius: 3px;
+  height: 450px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
   @media (max-width: 768px) {
     margin-right: 0px;
@@ -124,12 +125,14 @@ const Page = () => {
             value={username}
             onChange={setUsername}
             title="Username"
+            style={{ height: "48px" }}
           />
           <InputField
             type="password"
             value={pw}
             onChange={setPw}
             title="Password"
+            style={{ height: "48px" }}
           />
           <MyButton
             background="red"

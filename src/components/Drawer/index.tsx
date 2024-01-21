@@ -26,7 +26,7 @@ const MobileModal = styled.div<{
       : props.$position === "bottom"
       ? "flex-end"
       : "center"};
-  backdrop-filter: blur(1px);
+  /* backdrop-filter: blur(1px); */
   &.open {
     opacity: 1;
     pointer-events: all;

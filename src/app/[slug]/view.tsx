@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { TAttribute } from "./components/variancesDesktop";
 import Overview from "./components/overview";
 import Details from "./components/details";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useStore, { TPathItem } from "@/store/store";
 import useScreenWidth from "@/hooks/useScreenWidth";
 import ROUTES from "@/types/routes";
@@ -19,6 +19,7 @@ const Container = styled.div`
   gap: 20px;
   align-items: center;
   padding-top: 10px;
+  padding-bottom: 50px;
   @media (max-width: 768px) {
     padding-top: 0px;
   }

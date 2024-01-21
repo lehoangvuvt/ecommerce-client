@@ -254,7 +254,7 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
             justifyContent: "center",
           }}
         >
-          <Spinner bgColor="white" width="100px" />
+          <Spinner bgColor="black" width="100px" />
         </div>
       );
       showModal();

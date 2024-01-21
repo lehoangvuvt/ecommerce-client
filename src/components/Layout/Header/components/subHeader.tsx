@@ -74,7 +74,7 @@ const UserMenuItem = styled.div`
   box-sizing: border-box;
   padding: 5px 10px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   &:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }

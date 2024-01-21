@@ -1,5 +1,16 @@
+"use client";
+
+import MobilePageHeader from "@/components/MobilePageHeader";
+import styled from "styled-components";
+
+const Container = styled.div``;
+
 const Page = () => {
-  return <h1>Me</h1>;
+  return (
+    <Container>
+      <MobilePageHeader headerText="Me" />
+    </Container>
+  );
 };
 
 export default Page;
