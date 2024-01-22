@@ -57,10 +57,20 @@ export const ProductService = {
       `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/${slug}`,
       {
         method: "GET",
+      }
+    );
+    const data = (await response.json()) as TProductDetails;
+    return data;
+  },
+  async getSimilarProducts(slug: string): Promise<TProducItem[]> {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/similar-products/${slug}`,
+      {
+        method: "GET",
         cache: "no-store",
       }
     );
-    const data = await response.json();
+    const data = (await response.json()) as TProducItem[];
     return data;
   },
 };

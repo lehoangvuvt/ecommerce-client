@@ -1,6 +1,6 @@
 "use client";
 
-import { TProductDetails } from "@/types/api.type";
+import { TProducItem, TProductDetails } from "@/types/api.type";
 import styled from "styled-components";
 import { TAttribute } from "./components/variancesDesktop";
 import Overview from "./components/overview";
@@ -11,6 +11,7 @@ import useScreenWidth from "@/hooks/useScreenWidth";
 import ROUTES from "@/types/routes";
 import MobilePageHeader from "@/components/MobilePageHeader";
 import CartButton from "@/components/CartButton";
+import SimilarProducts from "./components/similarProducts";
 
 const Container = styled.div`
   display: flex;
@@ -28,13 +29,19 @@ const Container = styled.div`
 type Props = {
   details: TProductDetails;
   attributes: TAttribute;
+  similarProducts: TProducItem[];
 };
 
-const ProductView: React.FC<Props> = ({ details, attributes }) => {
+const ProductView: React.FC<Props> = ({
+  details,
+  attributes,
+  similarProducts,
+}) => {
   const { setPath } = useStore();
   const { deviceType } = useScreenWidth();
 
   useEffect(() => {
+    console.log({ similarProducts });
     const categoryPaths: TPathItem[] = details.category_path.map((item) => {
       return {
         isLink: true,
@@ -67,6 +74,9 @@ const ProductView: React.FC<Props> = ({ details, attributes }) => {
       )}
       <Overview attributes={attributes} details={details} />
       <Details details={details} />
+      {similarProducts && similarProducts.length > 0 && (
+        <SimilarProducts products={similarProducts} />
+      )}
     </Container>
   );
 };

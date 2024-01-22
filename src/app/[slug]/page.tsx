@@ -25,7 +25,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const Page = async ({ params }: { params: { slug: string } }) => {
-  const productDetails = await ProductService.getProductDetails(params.slug);
+  const [similarProducts, productDetails] = await Promise.all([
+    ProductService.getSimilarProducts(params.slug),
+    ProductService.getProductDetails(params.slug),
+  ]);
 
   if (!productDetails) return <div>Not Found</div>;
 
@@ -60,7 +63,13 @@ const Page = async ({ params }: { params: { slug: string } }) => {
       imgURL: imgUrl,
     });
   }
-  return <ProductView attributes={attributes} details={productDetails} />;
+  return (
+    <ProductView
+      attributes={attributes}
+      details={productDetails}
+      similarProducts={similarProducts}
+    />
+  );
 };
 
 export default Page;

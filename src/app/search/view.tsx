@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import ProductItem from "./components/productItem";
+import ProductItem from "@/components/ProductItem";
 import SearchFilter from "./components/searchFilter";
 import useStore from "@/store/store";
 import { useCallback, useEffect, useRef, useState } from "react";

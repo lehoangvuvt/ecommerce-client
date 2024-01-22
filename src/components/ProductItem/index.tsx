@@ -31,7 +31,6 @@ const Container = styled.div`
     width: calc(50% - 2.5px);
     height: 280px;
   }
-
 `;
 
 const ProductImage = styled.div`

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import ProductItem from "./productItem";
+import ProductItem from "@/components/ProductItem";
 import { TProducItem } from "@/types/api.type";
 import { useSearchParams } from "next/navigation";
 import useSearchInfiniteProducts from "@/react-query/hooks/useSearchInfiniteProducts";

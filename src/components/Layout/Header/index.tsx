@@ -26,7 +26,7 @@ const FullHeader = styled.div`
   justify-content: center;
   align-items: center;
   &.hide {
-    margin-top: calc(-${headerHeight}px);
+    /* margin-top: calc(-${headerHeight}px); */
   }
 `;
 
@@ -153,9 +153,7 @@ const Header = () => {
           setIsHidden(true);
         }
       } else {
-        if (window.scrollY === 0) {
-          setIsHidden(false);
-        }
+        setIsHidden(false);
       }
     }
   };

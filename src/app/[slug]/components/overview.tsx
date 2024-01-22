@@ -171,6 +171,7 @@ const AddToCartMobileFooter = styled.div`
   height: 45px;
   font-weight: 600;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
+  z-index: 10;
 `;
 
 type Props = {

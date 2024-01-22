@@ -11,7 +11,7 @@ const inter = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "V Ecommerce - Shopping Best Deals & Prices",
+  title: ":)) - Shopping Best Deals & Prices",
   description: "Shopping Best Deals & Prices",
 };
 
