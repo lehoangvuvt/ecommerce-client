@@ -7,6 +7,9 @@ import useStore from "@/store/store";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useScreenWidth from "@/hooks/useScreenWidth";
 import BackButton from "../BackButton";
+import usePopularSearchTerms from "@/react-query/hooks/usePopularSearchTerms";
+import { TSearchTerm } from "@/types/api.type";
+import useSuggestedSearchTerms from "@/react-query/hooks/useSuggestedSearchTerms";
 
 const DesktopSearchBar = styled.form`
   width: 90%;
@@ -18,7 +21,7 @@ const DesktopSearchBar = styled.form`
   justify-content: center;
   align-items: center;
   padding: 8px 0px;
-  overflow: hidden;
+  position: relative;
 `;
 
 const MobileSearchBar = styled.form`
@@ -142,13 +145,16 @@ const MobileSearchBarInput = styled.input`
 const noBackBtnMobileRoutes = ["/"];
 
 const SearchBar = () => {
-  const { filters, addFilterValues, setNewFilters } = useStore();
   const [searchText, setSearchText] = useState("");
+  const { terms: popTerms } = usePopularSearchTerms();
+  const { suggestedTerms } = useSuggestedSearchTerms(searchText);
+  const { filters, setNewFilters } = useStore();
   const pathname = usePathname();
   const router = useRouter();
   const [isOpenMobileSearchBar, setOpenMobileSearchBar] = useState(false);
   const { deviceType } = useScreenWidth();
   const searchParams = useSearchParams();
+  const [focus, setFocus] = useState(false);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -187,8 +193,21 @@ const SearchBar = () => {
     }
   };
 
+  const onClickPopTerm = (popTerm: TSearchTerm) => {
+    setSearchText(popTerm.term);
+    setNewFilters({ keyword: [popTerm.term] });
+    if (!pathname.includes("/search") || deviceType === "mobile") {
+      router.push(`/search?keyword=${popTerm.term}`);
+      setOpenMobileSearchBar(false);
+    }
+  };
+
   return deviceType === "desktop" ? (
-    <DesktopSearchBar onSubmit={onSubmit}>
+    <DesktopSearchBar
+      onFocus={(e) => setFocus(true)}
+      onBlur={(e) => setTimeout(() => setFocus(false), 100)}
+      onSubmit={onSubmit}
+    >
       <SearchIconContainer>
         <SearchIcon color="inherit" fontSize="inherit" />
       </SearchIconContainer>
@@ -198,6 +217,43 @@ const SearchBar = () => {
         onChange={(e) => setSearchText(e.target.value)}
       />
       <SearchButton type="submit">Search</SearchButton>
+      {focus && (
+        <div className="absolute w-[100%] bg-[white] top-[42px] z-50 flex flex-row flex-wrap shadow-md rounded-sm">
+          {suggestedTerms.length > 0 && (
+            <div className="w-[100%] flex flex-col flex-wrap pt-[5px]">
+              {suggestedTerms.map((suggestedTerm, index) => (
+                <div
+                  onClick={(e) => {
+                    onClickPopTerm(suggestedTerm);
+                  }}
+                  className="w-[100%] py-[5px] px-[15px] text-[16px] text-[rgba(0,0,0,0.8)] cursor-pointer hover:text-[black] hover:bg-[rgba(0,0,0,0.05)]"
+                  key={index}
+                >
+                  {suggestedTerm.term}
+                </div>
+              ))}
+            </div>
+          )}
+          {popTerms.length > 0 && searchText.length === 0 && (
+            <div className="w-[100%] flex flex-row flex-wrap pt-[5px] pb-[6px]">
+              <h1 className="pl-[12px] pt-[4px] pb-[6px] text-[14px] w-[100%]">
+                Popular search terms
+              </h1>
+              {popTerms.map((popTerm, index) => (
+                <div
+                  onClick={(e) => {
+                    onClickPopTerm(popTerm);
+                  }}
+                  className="w-[auto] py-[3px] px-[15px] text-[15px] text-[rgba(0,0,0,0.7)] cursor-pointer hover:text-[rgba(0,0,0,1)] "
+                  key={index}
+                >
+                  {popTerm.term}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </DesktopSearchBar>
   ) : (
     <MobileSearchBar onSubmit={onSubmit}>

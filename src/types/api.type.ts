@@ -198,3 +198,8 @@ export type TProductVarianceImage = {
   image_type: string;
   product_variance_id: string;
 } & TBase;
+
+export type TSearchTerm = {
+  term: string;
+  count: number;
+} & TBase;

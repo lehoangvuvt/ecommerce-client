@@ -63,6 +63,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
       imgURL: imgUrl,
     });
   }
+  
   return (
     <ProductView
       attributes={attributes}
