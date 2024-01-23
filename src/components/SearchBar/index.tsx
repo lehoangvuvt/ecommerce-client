@@ -10,6 +10,7 @@ import BackButton from "../BackButton";
 import usePopularSearchTerms from "@/react-query/hooks/usePopularSearchTerms";
 import { TSearchTerm } from "@/types/api.type";
 import useSuggestedSearchTerms from "@/react-query/hooks/useSuggestedSearchTerms";
+import useDebounce from "@/react-query/hooks/useDebounce";
 
 const DesktopSearchBar = styled.form`
   width: 90%;
@@ -146,8 +147,9 @@ const noBackBtnMobileRoutes = ["/"];
 
 const SearchBar = () => {
   const [searchText, setSearchText] = useState("");
+  const debouncedValue = useDebounce<string>(searchText, 250);
   const { terms: popTerms } = usePopularSearchTerms();
-  const { suggestedTerms } = useSuggestedSearchTerms(searchText);
+  const { suggestedTerms } = useSuggestedSearchTerms(debouncedValue);
   const { filters, setNewFilters } = useStore();
   const pathname = usePathname();
   const router = useRouter();
