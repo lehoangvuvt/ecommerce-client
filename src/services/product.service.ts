@@ -49,7 +49,6 @@ export const ProductService = {
       method: "GET",
     });
     const data = response.data as TSearchFilters;
-    console.log({ data });
     return data;
   },
   async getProductDetails(slug: string): Promise<TProductDetails> {

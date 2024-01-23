@@ -69,14 +69,29 @@ const Layout = ({ children }: Props) => {
   //   if (keys === "controlm") setOpen(true);
   // }, [keys]);
 
+  const checkIfShowPath = () => {
+    if (noPathRoutes.includes(pathname)) return false;
+    if (deviceType === "mobile") return false;
+    if (
+      pathname.startsWith("/") &&
+      pathname.split("/").length === 2 &&
+      pathname.length > 1
+    ) {
+      if (pathname.includes("/search")) return true;
+      const wordsSplitArr = pathname.split("/")[1].split(".")[0].split("-");
+      const slugTypeSuffix = wordsSplitArr[wordsSplitArr.length - 1];
+      if (slugTypeSuffix === "i" || slugTypeSuffix === "cat") return true;
+      return false;
+    }
+    return true;
+  };
+
   return (
     <Container>
       <Authentication />
       {!noHeaderRoutes.includes(pathname) && <Header />}
       <Content>
-        {!noPathRoutes.includes(pathname) && deviceType === "desktop" && (
-          <Path />
-        )}
+        {checkIfShowPath() && <Path />}
         {children}
       </Content>
       {!noFooterRoutes.includes(pathname) && deviceType === "desktop" && (

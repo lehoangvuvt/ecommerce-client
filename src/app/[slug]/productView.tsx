@@ -41,7 +41,6 @@ const ProductView: React.FC<Props> = ({
   const { deviceType } = useScreenWidth();
 
   useEffect(() => {
-    console.log({ similarProducts });
     const categoryPaths: TPathItem[] = details.category_path.map((item) => {
       return {
         isLink: true,

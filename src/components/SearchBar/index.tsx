@@ -11,6 +11,8 @@ import usePopularSearchTerms from "@/react-query/hooks/usePopularSearchTerms";
 import { TSearchTerm } from "@/types/api.type";
 import useSuggestedSearchTerms from "@/react-query/hooks/useSuggestedSearchTerms";
 import useDebounce from "@/react-query/hooks/useDebounce";
+import { useQueryClient } from "react-query";
+import REACT_QUERY_KEYS from "@/react-query/keys";
 
 const DesktopSearchBar = styled.form`
   width: 90%;
@@ -146,11 +148,12 @@ const MobileSearchBarInput = styled.input`
 const noBackBtnMobileRoutes = ["/"];
 
 const SearchBar = () => {
+  const queryClient = useQueryClient();
   const [searchText, setSearchText] = useState("");
   const debouncedValue = useDebounce<string>(searchText, 250);
   const { terms: popTerms } = usePopularSearchTerms();
   const { suggestedTerms } = useSuggestedSearchTerms(debouncedValue);
-  const { filters, setNewFilters } = useStore();
+  const { filters, setNewFilters, inStoreId } = useStore();
   const pathname = usePathname();
   const router = useRouter();
   const [isOpenMobileSearchBar, setOpenMobileSearchBar] = useState(false);
@@ -166,7 +169,15 @@ const SearchBar = () => {
     }
     if (!pathname.includes("/search") || deviceType === "mobile") {
       if (searchText.length > 0) {
-        router.push(`/search?keyword=${searchText}`);
+        queryClient.invalidateQueries([
+          REACT_QUERY_KEYS.GET_POPULAR_SEARCH_TERMS,
+          REACT_QUERY_KEYS.GET_SUGGESTED_SEARCH_TERMS,
+        ]);
+        let query = `keyword=${searchText}`;
+        if (inStoreId) {
+          query += `&store=${inStoreId}`;
+        }
+        router.push(`/search?${query}`);
         setOpenMobileSearchBar(false);
       }
     }
@@ -202,6 +213,10 @@ const SearchBar = () => {
       router.push(`/search?keyword=${popTerm.term}`);
       setOpenMobileSearchBar(false);
     }
+    queryClient.invalidateQueries([
+      REACT_QUERY_KEYS.GET_POPULAR_SEARCH_TERMS,
+      REACT_QUERY_KEYS.GET_SUGGESTED_SEARCH_TERMS,
+    ]);
   };
 
   return deviceType === "desktop" ? (
@@ -214,12 +229,16 @@ const SearchBar = () => {
         <SearchIcon color="inherit" fontSize="inherit" />
       </SearchIconContainer>
       <InputField
-        placeholder="Search products, categories, stores,..."
+        placeholder={
+          inStoreId
+            ? "Search products in this store"
+            : "Search products, categories, stores"
+        }
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
       />
       <SearchButton type="submit">Search</SearchButton>
-      {focus && (
+      {focus && !inStoreId && (
         <div className="absolute w-[100%] bg-[white] top-[42px] z-50 flex flex-row flex-wrap shadow-md rounded-sm">
           {suggestedTerms.length > 0 && (
             <div className="w-[100%] flex flex-col flex-wrap pt-[5px]">

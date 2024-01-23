@@ -12,17 +12,20 @@ type State = {
   filters: { [key: string]: string[] };
   path: TPathItem[];
   userInfo: TUserInfo | null;
+  inStoreId: number | null;
   addFilterValue: (queryKey: string, value: string) => void;
   addFilterValues: (queryKey: string, values: string[]) => void;
   removeFilterValue: (queryKey: string, value: string) => void;
   setNewFilters: (newFilters: { [key: string]: string[] }) => void;
   setPath: (newPath: TPathItem[]) => void;
   setUserInfo: (userInfo: TUserInfo | null) => void;
+  setInStoreId: (storeId: number | null) => void;
 };
 
 const useStore = create<State>((set) => ({
   filters: {},
   path: [],
+  inStoreId: null,
   userInfo: null,
   addFilterValue: (queryKey: string, value: string) =>
     set((state: State) => ({
@@ -58,6 +61,10 @@ const useStore = create<State>((set) => ({
   setUserInfo: (userInfo: TUserInfo | null) =>
     set((state: State) => ({
       userInfo: userInfo,
+    })),
+  setInStoreId: (storeId: number | null) =>
+    set((state: State) => ({
+      inStoreId: storeId,
     })),
 }));
 

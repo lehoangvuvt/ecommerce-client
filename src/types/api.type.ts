@@ -56,6 +56,41 @@ export type TProductDetails = {
   } & TBase;
   product_variance: TVariance;
   category_path: { name: string; id: string; slug: string }[];
+  category: TCategory;
+  store: TStoreDetails;
+} & TBase;
+
+export type TCategory = {
+  category_name: string;
+  parent_category_id: string;
+  attribute_set_id: string;
+  slug: string;
+  attributeSet: TAttributeSet;
+} & TBase;
+
+export type TAttributeSet = {
+  attributeSetValueMappings: TAttributeSetValueMapping[];
+} & TBase;
+
+export type TAttributeSetValueMapping = {
+  attribute_set_id: string;
+  attribute_value_id: string;
+  attributeValue: TAttributeValue;
+} & TBase;
+
+export type TAttributeValue = {
+  attribute_id: string;
+  value_decimal: number;
+  value_int: number;
+  value_string: string;
+  attribute: TAttributeDetails;
+} & TBase;
+
+export type TAttributeDetails = {
+  attribute_name: string;
+  value_type: number;
+  is_primary: boolean;
+  short_id: string;
 } & TBase;
 
 export type TPagingListResponse<T> = {
@@ -134,63 +169,7 @@ export type TProductVariance = {
   attribute_set_id: string;
   quantity: number;
   productVarianceImages: TProductVarianceImage[];
-  attributeSet: {
-    id: "a79fc7ab-da84-4650-953c-306f93692646";
-    createdAt: "2024-01-10T16:28:23.843Z";
-    updatedAt: null;
-    attributeSetValueMappings: [
-      {
-        id: "024a1fbe-4c8a-4ee1-a558-6efd2ee4348d";
-        createdAt: "2024-01-10T16:28:23.863Z";
-        updatedAt: null;
-        attribute_set_id: "a79fc7ab-da84-4650-953c-306f93692646";
-        attribute_value_id: "f37512ff-6922-43ae-ac8b-e127dc5bd670";
-        attributeValue: {
-          id: "f37512ff-6922-43ae-ac8b-e127dc5bd670";
-          createdAt: "2024-01-10T16:28:23.788Z";
-          updatedAt: null;
-          attribute_id: "f16d2ca5-73ea-4e3c-83c2-a7141e89ce47";
-          value_decimal: null;
-          value_int: null;
-          value_string: "white";
-          attribute: {
-            id: "f16d2ca5-73ea-4e3c-83c2-a7141e89ce47";
-            createdAt: "2024-01-10T16:28:23.764Z";
-            updatedAt: null;
-            attribute_name: "color";
-            value_type: 2;
-            is_primary: true;
-            short_id: "attribute_4";
-          };
-        };
-      },
-      {
-        id: "bddd1376-ffe2-42f8-a7f4-2cfd35540978";
-        createdAt: "2024-01-10T16:28:23.881Z";
-        updatedAt: null;
-        attribute_set_id: "a79fc7ab-da84-4650-953c-306f93692646";
-        attribute_value_id: "48650800-24da-4e04-859d-c255457c9e38";
-        attributeValue: {
-          id: "48650800-24da-4e04-859d-c255457c9e38";
-          createdAt: "2024-01-10T16:28:23.823Z";
-          updatedAt: null;
-          attribute_id: "fec6e2bd-87e3-4c04-b3a9-343cb6bcfcc1";
-          value_decimal: null;
-          value_int: null;
-          value_string: "37.5";
-          attribute: {
-            id: "fec6e2bd-87e3-4c04-b3a9-343cb6bcfcc1";
-            createdAt: "2024-01-10T16:28:23.766Z";
-            updatedAt: null;
-            attribute_name: "size";
-            value_type: 2;
-            is_primary: false;
-            short_id: "attribute_5";
-          };
-        };
-      }
-    ];
-  };
+  attributeSet: TAttributeSet;
 } & TBase;
 
 export type TProductVarianceImage = {
@@ -203,3 +182,15 @@ export type TSearchTerm = {
   term: string;
   count: number;
 } & TBase;
+
+export type TStoreDetails = {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  url: string;
+  name: string;
+  avatar_url: string;
+  background_url: string;
+  banner_url: string;
+  products: TProductDetails[];
+};
