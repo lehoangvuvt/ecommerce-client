@@ -1,6 +1,6 @@
 "use client";
 
-import { TProducItem, TProductDetails } from "@/types/api.type";
+import { TProducItem, TProductDetails, TStoreOverview } from "@/types/api.type";
 import styled from "styled-components";
 import { TAttribute } from "./components/variancesDesktop";
 import Overview from "./components/overview";
@@ -12,6 +12,7 @@ import ROUTES from "@/types/routes";
 import MobilePageHeader from "@/components/MobilePageHeader";
 import CartButton from "@/components/CartButton";
 import SimilarProducts from "./components/similarProducts";
+import StoreOverview from "./components/storeOverview";
 
 const Container = styled.div`
   display: flex;
@@ -30,12 +31,14 @@ type Props = {
   details: TProductDetails;
   attributes: TAttribute;
   similarProducts: TProducItem[];
+  storeOverview: TStoreOverview | null;
 };
 
 const ProductView: React.FC<Props> = ({
   details,
   attributes,
   similarProducts,
+  storeOverview,
 }) => {
   const { setPath } = useStore();
   const { deviceType } = useScreenWidth();
@@ -72,6 +75,19 @@ const ProductView: React.FC<Props> = ({
         />
       )}
       <Overview attributes={attributes} details={details} />
+      {storeOverview && (
+        <StoreOverview
+          withBG={false}
+          style={{
+            width: deviceType === "desktop" ? "78%" : "100%",
+            marginBottom: deviceType === "desktop" ? "0px" : "20px",
+            border: "1px solid rgba(0,0,0,0.1)",
+            padding: "10px",
+            height: deviceType === "desktop" ? "120px" : "auto",
+          }}
+          overview={storeOverview}
+        />
+      )}
       <Details details={details} />
       {similarProducts && similarProducts.length > 0 && (
         <SimilarProducts products={similarProducts} />

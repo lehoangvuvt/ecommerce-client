@@ -57,7 +57,7 @@ export type TProductDetails = {
   product_variance: TVariance;
   category_path: { name: string; id: string; slug: string }[];
   category: TCategory;
-  store: TStoreDetails;
+  store_id: number;
 } & TBase;
 
 export type TCategory = {
@@ -192,5 +192,20 @@ export type TStoreDetails = {
   avatar_url: string;
   background_url: string;
   banner_url: string;
-  products: TProductDetails[];
+  overview: TStoreOverview;
+};
+
+export type TStoreOverview = {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  url: string;
+  name: string;
+  avatar_url: string;
+  background_url: string;
+  banner_url: string;
+  category_tabs: { slug: string; name: string }[];
+  total_ratings_count: number;
+  total_followers_count: number;
+  total_products_count: number;
 };

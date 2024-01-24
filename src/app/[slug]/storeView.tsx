@@ -1,10 +1,11 @@
 "use client";
 
 import useStore from "@/store/store";
-import { TCategory, TStoreDetails } from "@/types/api.type";
+import { TStoreDetails, TStoreOverview } from "@/types/api.type";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import StoreOverview from "./components/storeOverview";
 
 const Container = styled.div`
   width: 100%;
@@ -22,55 +23,6 @@ const Header = styled.div`
   align-items: center;
   justify-content: center;
   padding: 15px 10% 0px 10%;
-`;
-
-const StoreInfoContainer = styled.div`
-  height: 130px;
-  width: 100%;
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-`;
-
-const StoreAvatarContainer = styled.div<{ $bg: string }>`
-  width: 32%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${(props) => `url('${props.$bg}')`};
-  background-size: cover;
-  background-position: center;
-  border-radius: 4px;
-  overflow: hidden;
-  .cover {
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(1px);
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    padding: 10px 20px;
-    .avatar {
-      width: 25%;
-      aspect-ratio: 1;
-      position: relative;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-    .name {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      color: rgba(255, 255, 255, 0.98);
-      font-weight: 400;
-      font-size: 20px;
-    }
-  }
 `;
 
 const ViewTabs = styled.div`
@@ -102,36 +54,20 @@ const ViewTab = styled.div`
   }
 `;
 
-const StoreOverviewContainer = styled.div`
-  height: 100%;
-  flex: 1;
-`;
-
 type Props = {
   details: TStoreDetails;
 };
 
 const StoreView: React.FC<Props> = ({ details }) => {
   const [activeTab, setActiveTab] = useState("home");
-  const [categories, setCategories] = useState<TCategory[]>([]);
+  const [categories, setCategories] = useState<
+    { slug: string; name: string }[]
+  >([]);
   const { setInStoreId } = useStore();
 
   useEffect(() => {
     setInStoreId(details.id);
-    if (details.products.length > 0) {
-      const categories: TCategory[] = [];
-      details.products.forEach((product) => {
-        const category = product.category;
-        if (
-          categories.findIndex(
-            (_category) => _category.slug === category.slug
-          ) === -1
-        ) {
-          categories.push(category);
-        }
-      });
-      setCategories(categories);
-    }
+    setCategories(details.overview.category_tabs);
     return () => {
       setInStoreId(null);
     };
@@ -140,24 +76,7 @@ const StoreView: React.FC<Props> = ({ details }) => {
   return (
     <Container>
       <Header>
-        <StoreInfoContainer>
-          <StoreAvatarContainer $bg={details.background_url}>
-            <div className="cover">
-              <div className="avatar">
-                <Image
-                  src={details.avatar_url}
-                  fill
-                  style={{ objectFit: "cover", objectPosition: "center" }}
-                  alt={`/${details.url}`}
-                />
-              </div>
-              <div className="name">{details.name}</div>
-            </div>
-          </StoreAvatarContainer>
-          <StoreOverviewContainer>
-            Products: {details.products.length}
-          </StoreOverviewContainer>
-        </StoreInfoContainer>
+        <StoreOverview overview={details.overview} />
         <ViewTabs>
           <ViewTab
             onClick={() => setActiveTab("home")}
@@ -172,7 +91,7 @@ const StoreView: React.FC<Props> = ({ details }) => {
                 key={category.slug}
                 onClick={() => setActiveTab(category.slug)}
               >
-                {category.category_name}
+                {category.name}
               </ViewTab>
             ))}
         </ViewTabs>

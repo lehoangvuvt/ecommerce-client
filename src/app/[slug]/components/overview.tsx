@@ -35,7 +35,7 @@ const Container = styled.div`
     flex-flow: column wrap;
     width: 100%;
     border: none;
-    padding: 0px;
+    padding: 0px 0px 20px 0px;
   }
 `;
 

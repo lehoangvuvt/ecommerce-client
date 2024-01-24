@@ -13,7 +13,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const wordsSplitArr = params.slug.split(".")[0].split("-");
   const slugTypeSuffix = wordsSplitArr[wordsSplitArr.length - 1];
-  let title = params.slug.trim();
+  let title = params.slug.trim() + ", Online Shop | Ecommerce";
   if (slugTypeSuffix === "i" || slugTypeSuffix === "cate") {
     title = params.slug
       .split("-")
@@ -44,6 +44,10 @@ const Page = async ({ params }: { params: { slug: string } }) => {
     ]);
 
     if (!productDetails) return <div>Not Found</div>;
+
+    const storeOverview = await StoreService.getStoreOverview(
+      productDetails.store_id
+    );
 
     const variances = productDetails.product_variance;
     const attributes: TAttribute = {
@@ -82,6 +86,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
         attributes={attributes}
         details={productDetails}
         similarProducts={similarProducts}
+        storeOverview={storeOverview}
       />
     );
   };
