@@ -113,6 +113,8 @@ export type TProducItem = {
   slug: string;
   prices: number[];
   product_images: string[];
+  average_rating: number;
+  total_ratings_count: number;
 } & TBase;
 
 export type TSearchFilters = {
@@ -208,4 +210,52 @@ export type TStoreOverview = {
   total_ratings_count: number;
   total_followers_count: number;
   total_products_count: number;
+  average_rating: number;
 };
+
+export type TRerverseGeolocationRes = {
+  man_made: string;
+  road: string;
+  quarter: string;
+  suburb: string;
+  city: string;
+  "ISO3166-2-lvl4": string;
+  postcode: number;
+  country: string;
+  country_code: string;
+  location_full_text: string;
+};
+
+export type TSearchAddressToCoordsRes = {
+  place_id: number;
+  licence: string;
+  osm_type: string;
+  osm_id: number;
+  lat: string;
+  lon: string;
+  category: string;
+  type: string;
+  place_rank: number;
+  importance: number;
+  addresstype: string;
+  name: string;
+  display_name: string;
+  boundingbox: string[];
+  geojson: {
+    type: string;
+    coordinates: Record<number, number>;
+  };
+};
+
+export type TProductReview = {
+  product_variance_id: string;
+  user_id: string;
+  star: number;
+  comment: string;
+  variance_values: string[];
+  username: string;
+} & TBase;
+
+export type TProductReviewImage = {
+  image_url: string;
+} & TBase;

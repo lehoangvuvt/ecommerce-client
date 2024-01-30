@@ -45,9 +45,10 @@ const Page = async ({ params }: { params: { slug: string } }) => {
 
     if (!productDetails) return <div>Not Found</div>;
 
-    const storeOverview = await StoreService.getStoreOverview(
-      productDetails.store_id
-    );
+    const [productReviews, storeOverview] = await Promise.all([
+      ProductService.getProductReviews(productDetails.id, 0),
+      StoreService.getStoreOverview(productDetails.store_id),
+    ]);
 
     const variances = productDetails.product_variance;
     const attributes: TAttribute = {
@@ -87,6 +88,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
         details={productDetails}
         similarProducts={similarProducts}
         storeOverview={storeOverview}
+        productReviews={productReviews}
       />
     );
   };

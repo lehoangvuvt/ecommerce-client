@@ -1,5 +1,7 @@
 "use client";
 
+import MyButton from "@/components/Button";
+import useStore from "@/store/store";
 import { TStoreOverview } from "@/types/api.type";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -62,14 +64,27 @@ const StoreAvatarContainer = styled.div<{ $bg: string; $withBG: boolean }>`
       border-radius: 50%;
       overflow: hidden;
     }
-    .name {
+    &__left {
       flex: 1;
       display: flex;
-      align-items: center;
+      flex-flow: column wrap;
+      justify-content: center;
+      gap: 6px;
       color: ${(props) =>
         props.$withBG ? "rgba(255, 255, 255, 0.98)" : "black"};
-      font-weight: 400;
-      font-size: 16px;
+      height: 100%;
+      &__name {
+        color: ${(props) =>
+          props.$withBG ? "rgba(255, 255, 255, 0.98)" : "black"};
+        font-weight: 400;
+        font-size: 16px;
+      }
+      &__buttons {
+        width: 100%;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+      }
     }
   }
 `;
@@ -99,9 +114,9 @@ const StoreStat = styled.div`
     width: 100%;
   }
   p {
-    font-size: 15px;
+    font-size: 14px;
     &:nth-child(1) {
-      color: rgba(0, 0, 0, 0.55);
+      color: rgba(0, 0, 0, 0.85);
     }
     &:nth-child(2) {
       color: red;
@@ -117,6 +132,7 @@ type Props = {
 
 const StoreOverview: React.FC<Props> = ({ overview, style, withBG = true }) => {
   const router = useRouter();
+  const { inStoreId } = useStore();
 
   return (
     <Container style={style}>
@@ -133,13 +149,38 @@ const StoreOverview: React.FC<Props> = ({ overview, style, withBG = true }) => {
               alt="store-avatar"
             />
           </div>
-          <div className="name">{overview.name}</div>
+          <div className="cover__left">
+            <div className="cover__left__name">{overview.name}</div>
+            {!inStoreId && (
+              <div className="cover__left__buttons">
+                <MyButton
+                  background="white"
+                  fontColor="rgba(0,0,0,0.85)"
+                  onClick={() => router.push(`/${overview.url}`)}
+                  fontSize="14px"
+                  height="auto"
+                  width="auto"
+                  customStyle={{
+                    padding: "2.5px 15px",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    borderRadius: "2px",
+                  }}
+                >
+                  View Shop
+                </MyButton>
+              </div>
+            )}
+          </div>
         </div>
       </StoreAvatarContainer>
       <StoreStatsContainer>
         <StoreStat>
           <p>Ratings</p>
-          <p>{overview.total_ratings_count}</p>
+          <p>
+            {overview.average_rating} ({overview.total_ratings_count} Rating)
+          </p>
         </StoreStat>
         <StoreStat>
           <p>Products</p>

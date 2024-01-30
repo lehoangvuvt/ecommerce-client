@@ -40,9 +40,11 @@ const withSubMenuRoutes: string[] = ["/", "/login", "/sign-up"];
 const Layout = ({ children }: Props) => {
   const pathname = usePathname();
   const { deviceType } = useScreenWidth();
-
   const checkIfShowPath = () => {
     if (noPathRoutes.includes(pathname)) return false;
+    if (pathname.startsWith("/order-tracking") || pathname.startsWith("/me")) {
+      return false;
+    }
     if (deviceType === "mobile") return false;
     if (
       pathname.startsWith("/") &&

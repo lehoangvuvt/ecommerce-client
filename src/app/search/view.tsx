@@ -245,7 +245,7 @@ const SearchView = ({
         .substring(1);
       url.set(queryKey, value);
     }
-    router.push("/search?" + url.toString());
+    router.push("/search?" + url.toString(), { scroll: true });
   }, [filters, router]);
 
   useEffect(() => {

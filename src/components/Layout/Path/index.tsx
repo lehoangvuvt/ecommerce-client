@@ -56,7 +56,7 @@ const Path = () => {
             color="inherit"
             fontSize="inherit"
             style={{
-              fontSize: "15px",
+              fontSize: "14px",
               color: "black",
               marginBottom: "2px",
             }}
@@ -70,7 +70,7 @@ const Path = () => {
               color="inherit"
               fontSize="inherit"
               style={{
-                fontSize: "15px",
+                fontSize: "14px",
                 color: "black",
                 marginBottom: "2px",
               }}

@@ -6,10 +6,12 @@ import { convertNumberToCurrencyString } from "@/utils/string.utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarIcon from "@mui/icons-material/Star";
 
 const Container = styled.div`
   width: calc(20% - 8px);
-  aspect-ratio: 0.6;
+  aspect-ratio: 0.64;
   display: flex;
   flex-flow: column wrap;
   background-color: white;
@@ -66,7 +68,7 @@ const ProductName = styled.div`
 
 const ProductPrice = styled.div`
   width: 90%;
-  font-size: 13px;
+  font-size: 14px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -75,6 +77,19 @@ const ProductPrice = styled.div`
   padding-top: 5px;
   color: red;
   font-weight: 500;
+`;
+
+const Stars = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 8px 6px;
+  .filled,
+  .normal {
+    color: #fbc02d;
+    font-size: 15px;
+  }
 `;
 
 type Props = {
@@ -111,6 +126,27 @@ const ProductItem: React.FC<Props> = ({ product }) => {
             product.prices.sort((a, b) => b - a)[1]
           )}
         </ProductPrice>
+        <Stars>
+          {Array(5)
+            .fill("")
+            .map((_, i) =>
+              i < product.average_rating ? (
+                <StarIcon
+                  key={i}
+                  className="filled"
+                  fontSize="inherit"
+                  color="inherit"
+                />
+              ) : (
+                <StarBorderIcon
+                  className="normal"
+                  fontSize="inherit"
+                  color="inherit"
+                  key={i}
+                />
+              )
+            )}
+        </Stars>
       </ProductInfo>
     </Container>
   );

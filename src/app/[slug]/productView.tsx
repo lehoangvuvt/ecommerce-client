@@ -1,6 +1,12 @@
 "use client";
 
-import { TProducItem, TProductDetails, TStoreOverview } from "@/types/api.type";
+import {
+  TPagingListResponse,
+  TProducItem,
+  TProductDetails,
+  TProductReview,
+  TStoreOverview,
+} from "@/types/api.type";
 import styled from "styled-components";
 import { TAttribute } from "./components/variancesDesktop";
 import Overview from "./components/overview";
@@ -13,6 +19,7 @@ import MobilePageHeader from "@/components/MobilePageHeader";
 import CartButton from "@/components/CartButton";
 import SimilarProducts from "./components/similarProducts";
 import StoreOverview from "./components/storeOverview";
+import ProductReviews from "./components/productReviews";
 
 const Container = styled.div`
   display: flex;
@@ -32,6 +39,7 @@ type Props = {
   attributes: TAttribute;
   similarProducts: TProducItem[];
   storeOverview: TStoreOverview | null;
+  productReviews: TPagingListResponse<TProductReview>;
 };
 
 const ProductView: React.FC<Props> = ({
@@ -39,6 +47,7 @@ const ProductView: React.FC<Props> = ({
   attributes,
   similarProducts,
   storeOverview,
+  productReviews,
 }) => {
   const { setPath } = useStore();
   const { deviceType } = useScreenWidth();
@@ -89,6 +98,7 @@ const ProductView: React.FC<Props> = ({
         />
       )}
       <Details details={details} />
+      <ProductReviews data={productReviews} />
       {similarProducts && similarProducts.length > 0 && (
         <SimilarProducts products={similarProducts} />
       )}

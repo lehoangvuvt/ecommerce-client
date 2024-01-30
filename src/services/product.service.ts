@@ -5,6 +5,7 @@ import {
   TProducItem,
   TSearchFilters,
   TPagingListResponse,
+  TProductReview,
 } from "@/types/api.type";
 
 const baseRoute = "product";
@@ -30,7 +31,7 @@ export const ProductService = {
       url: `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/search/${searchParamsString}&page=${currentPage}`,
       method: "GET",
     });
-    const data = response.data;
+    const data = response.data as TPagingListResponse<TProducItem>;
     return data;
   },
   async getSearchFilters(searchParams: {
@@ -70,6 +71,20 @@ export const ProductService = {
       }
     );
     const data = (await response.json()) as TProducItem[];
+    return data;
+  },
+  async getProductReviews(
+    id: string,
+    page: number
+  ): Promise<TPagingListResponse<TProductReview>> {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/review/id=${id}&page=${page}`,
+      {
+        method: "GET",
+        cache: "no-store",
+      }
+    );
+    const data = (await response.json()) as TPagingListResponse<TProductReview>;
     return data;
   },
 };

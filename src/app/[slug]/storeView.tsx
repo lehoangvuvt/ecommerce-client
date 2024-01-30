@@ -28,12 +28,11 @@ const Header = styled.div`
 const ViewTabs = styled.div`
   width: 100%;
   height: 50px;
-  margin-top: 20px;
+  margin-top: 10px;
   display: flex;
   flex-flow: row wrap;
   align-items: flex-end;
   justify-content: flex-start;
-  gap: 5px;
 `;
 
 const ViewTab = styled.div`
@@ -44,8 +43,8 @@ const ViewTab = styled.div`
   cursor: pointer;
   flex: 1 1 0px;
   flex-basis: 0;
-  max-width: 200px;
-  font-size: 15px;
+  max-width: 180px;
+  font-size: 14px;
   border-bottom: 2px solid white;
   color: black;
   &.selected {
