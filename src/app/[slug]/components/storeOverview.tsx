@@ -91,9 +91,9 @@ const StoreAvatarContainer = styled.div<{ $bg: string; $withBG: boolean }>`
 `;
 
 const StoreStatsContainer = styled.div`
-  height: 100%;
   flex: 1;
   display: flex;
+  gap: 15px;
   flex-flow: row wrap;
   align-items: center;
   justify-content: space-between;
