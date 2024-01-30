@@ -177,6 +177,11 @@ const FixedKeywordContainer = styled.div`
   display: flex;
   display: flex;
   align-items: center;
+  @media (max-width: 768px) {
+    padding-top: 110px;
+    margin: 10px auto -100px auto;
+    width: 92%;
+  }
   span {
     color: blue;
     font-style: italic;

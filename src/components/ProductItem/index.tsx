@@ -11,7 +11,7 @@ import StarIcon from "@mui/icons-material/Star";
 
 const Container = styled.div`
   width: calc(20% - 8px);
-  aspect-ratio: 0.64;
+  aspect-ratio: 0.6;
   display: flex;
   flex-flow: column wrap;
   background-color: white;
@@ -32,6 +32,11 @@ const Container = styled.div`
   @media (max-width: 768px) {
     width: calc(50% - 2.5px);
     height: 280px;
+  }
+  @media (max-width: 350px) {
+    width: 95%;
+    height: 280px;
+    margin: auto auto;
   }
 `;
 
