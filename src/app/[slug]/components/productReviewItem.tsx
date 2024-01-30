@@ -6,6 +6,7 @@ import defaultAvatar from "/public/images/misc/default-avatar.jpg";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import Image from "next/image";
+import moment from "moment";
 
 const Container = styled.div`
   width: 100%;
@@ -104,8 +105,8 @@ const ProductReviewItem: React.FC<Props> = ({ data }) => {
             )}
         </Stars>
         <DateAndVarianceInfo>
-          {new Date(data.createdAt).toDateString()} | Variance:{" "}
-          {data.variance_values[0]} {data.variance_values[1]}
+          {moment(new Date(data.createdAt)).format("yy-MM-DD hh:mm")} |
+          Variance: {data.variance_values[0]} {data.variance_values[1]}
         </DateAndVarianceInfo>
         <Comment>{data.comment}</Comment>
       </RightContent>

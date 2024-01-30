@@ -36,4 +36,20 @@ export const SearchService = {
       return [];
     }
   },
+  async getFixedKeyword(keyword: string): Promise<{ fixed: string } | null> {
+    try {
+      const response = await baseAxios({
+        url: `${baseRoute}/fixed-keyword/${keyword}`,
+        method: "GET",
+      });
+      if (response.status === 200) {
+        const data = response.data as { fixed: string };
+        return data;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  },
 };

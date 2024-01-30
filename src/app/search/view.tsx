@@ -16,6 +16,7 @@ import useSearchFilters from "@/react-query/hooks/useSearchFilters";
 import Spinner from "@/components/Spinner";
 import MobileList from "./components/mobileList";
 import ROUTES from "@/types/routes";
+import { SearchService } from "@/services/search.service";
 
 const Container = styled.div`
   width: 80%;
@@ -169,6 +170,24 @@ const MobileFilterApplyButton = styled.button`
   right: 20px;
 `;
 
+const FixedKeywordContainer = styled.div`
+  width: 78%;
+  color: red;
+  margin: 10px auto 10px auto;
+  display: flex;
+  display: flex;
+  align-items: center;
+  span {
+    color: blue;
+    font-style: italic;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
 const SearchView = ({
   searchParams,
 }: {
@@ -194,13 +213,23 @@ const SearchView = ({
     { reactNode: <p>Top Sales</p>, value: "sales" },
   ];
   const productsContainerRef = useRef<HTMLDivElement>(null);
+  const [fixedKeyword, setFixedKeyword] = useState<string | null>(null);
 
   useEffect(() => {
+    const getFixedKeyword = async () => {
+      const response = await SearchService.getFixedKeyword(
+        searchParams["keyword"]
+      );
+      if (response && response.fixed) {
+        setFixedKeyword(response.fixed);
+      }
+    };
     const handlePath = async () => {
       let lastPathValue = "";
 
       if (searchParams["keyword"]) {
         lastPathValue = searchParams["keyword"];
+        getFixedKeyword();
       } else {
         if (searchParams["c"]) {
           lastPathValue = searchParams["c"]
@@ -323,92 +352,106 @@ const SearchView = ({
   };
 
   return (
-    <Container>
-      {deviceType === "desktop" && renderDesktopFilters()}
-      {deviceType === "mobile" && renderMobileFilters()}
-      {deviceType === "mobile" && (
-        <Tabs
-          onClickTab={(value) => setSortType(value)}
-          selectedTabValue={filters["sortBy"] ? filters["sortBy"][0] : null}
-          type="mobile"
-          tabItems={[
-            ...sortTabItems,
-            {
-              reactNode: (
-                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    paddingRight: "4px",
-                  }}
-                >
-                  <FilterAltIcon
-                    key="filter"
-                    style={{ color: "rgba(0,0,0,0.8)" }}
-                    onClick={() => setOpenMobileFilters(true)}
-                  />
-                </div>
-              ),
-              value: "filter-btn",
-              disabled: true,
-            },
-          ]}
-        />
-      )}
-      <Right>
-        {products && products.data && products.data.length > 0 && (
-          <>
-            {deviceType === "desktop" && (
-              <RightHeader>
-                <Tabs
-                  onClickTab={(value) => setSortType(value)}
-                  selectedTabValue={
-                    filters["sortBy"] ? filters["sortBy"][0] : null
-                  }
-                  style={{ width: "90%" }}
-                  type="desktop"
-                  tabItems={sortTabItems}
-                />
-                <Paging
-                  style={{ flex: "1" }}
-                  current_page={products ? products.current_page : 0}
-                  has_next={products ? products.has_next : false}
-                  total_page={products ? products.total_page : 0}
-                />
-              </RightHeader>
-            )}
-            {deviceType === "desktop" && (
-              <ProductsContainer ref={productsContainerRef}>
-                {products &&
-                  products.data.map((product, pIndex) => (
-                    <ProductItem key={pIndex} product={product} />
-                  ))}
-              </ProductsContainer>
-            )}
-          </>
-        )}
-
-        {deviceType === "mobile" && <MobileList />}
-
-        {isLoadingSearchProducts && (
-          <div
-            style={{
-              width: "100%",
-              height: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+    <>
+      {fixedKeyword && (
+        <FixedKeywordContainer>
+          Did you mean:&nbsp;
+          <span
+            onClick={() => {
+              window.location.href = `/search?keyword=${fixedKeyword}`;
             }}
           >
-            <Spinner />
-          </div>
+            {fixedKeyword}
+          </span>
+        </FixedKeywordContainer>
+      )}
+      <Container>
+        {deviceType === "desktop" && renderDesktopFilters()}
+        {deviceType === "mobile" && renderMobileFilters()}
+        {deviceType === "mobile" && (
+          <Tabs
+            onClickTab={(value) => setSortType(value)}
+            selectedTabValue={filters["sortBy"] ? filters["sortBy"][0] : null}
+            type="mobile"
+            tabItems={[
+              ...sortTabItems,
+              {
+                reactNode: (
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      paddingRight: "4px",
+                    }}
+                  >
+                    <FilterAltIcon
+                      key="filter"
+                      style={{ color: "rgba(0,0,0,0.8)" }}
+                      onClick={() => setOpenMobileFilters(true)}
+                    />
+                  </div>
+                ),
+                value: "filter-btn",
+                disabled: true,
+              },
+            ]}
+          />
         )}
-      </Right>
-      {!isLoadingSearchProducts &&
-        products.data.length === 0 &&
-        deviceType === "desktop" && <EmptyContainer>Empty</EmptyContainer>}
-    </Container>
+        <Right>
+          {products && products.data && products.data.length > 0 && (
+            <>
+              {deviceType === "desktop" && (
+                <RightHeader>
+                  <Tabs
+                    onClickTab={(value) => setSortType(value)}
+                    selectedTabValue={
+                      filters["sortBy"] ? filters["sortBy"][0] : null
+                    }
+                    style={{ width: "90%" }}
+                    type="desktop"
+                    tabItems={sortTabItems}
+                  />
+                  <Paging
+                    style={{ flex: "1" }}
+                    current_page={products ? products.current_page : 0}
+                    has_next={products ? products.has_next : false}
+                    total_page={products ? products.total_page : 0}
+                  />
+                </RightHeader>
+              )}
+              {deviceType === "desktop" && (
+                <ProductsContainer ref={productsContainerRef}>
+                  {products &&
+                    products.data.map((product, pIndex) => (
+                      <ProductItem key={pIndex} product={product} />
+                    ))}
+                </ProductsContainer>
+              )}
+            </>
+          )}
+
+          {deviceType === "mobile" && <MobileList />}
+
+          {isLoadingSearchProducts && (
+            <div
+              style={{
+                width: "100%",
+                height: "50%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Spinner />
+            </div>
+          )}
+        </Right>
+        {!isLoadingSearchProducts &&
+          products.data.length === 0 &&
+          deviceType === "desktop" && <EmptyContainer>Empty</EmptyContainer>}
+      </Container>
+    </>
   );
 };
 

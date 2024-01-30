@@ -211,7 +211,7 @@ export type TStoreOverview = {
   total_followers_count: number;
   total_products_count: number;
   average_rating: number;
-};
+} & TBase;
 
 export type TRerverseGeolocationRes = {
   man_made: string;

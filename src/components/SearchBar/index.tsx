@@ -9,7 +9,7 @@ import useScreenWidth from "@/hooks/useScreenWidth";
 import BackButton from "../BackButton";
 import usePopularSearchTerms from "@/react-query/hooks/usePopularSearchTerms";
 import { TSearchTerm } from "@/types/api.type";
-import useSuggestedSearchTerms from "@/react-query/hooks/useSuggestedSearchTerms";
+// import useSuggestedSearchTerms from "@/react-query/hooks/useSuggestedSearchTerms";
 import useDebounce from "@/react-query/hooks/useDebounce";
 import { useQueryClient } from "react-query";
 import REACT_QUERY_KEYS from "@/react-query/keys";
@@ -152,7 +152,7 @@ const SearchBar = () => {
   const [searchText, setSearchText] = useState("");
   const debouncedValue = useDebounce<string>(searchText, 250);
   const { terms: popTerms } = usePopularSearchTerms();
-  const { suggestedTerms } = useSuggestedSearchTerms(debouncedValue);
+  // const { suggestedTerms } = useSuggestedSearchTerms(debouncedValue);
   const { filters, setNewFilters, inStoreId } = useStore();
   const pathname = usePathname();
   const router = useRouter();
@@ -238,7 +238,7 @@ const SearchBar = () => {
         onChange={(e) => setSearchText(e.target.value)}
       />
       <SearchButton type="submit">Search</SearchButton>
-      {focus && !inStoreId && (
+      {/* {focus && !inStoreId && (
         <div className="absolute w-[100%] bg-[white] top-[42px] z-50 flex flex-row flex-wrap shadow-md rounded-sm">
           {suggestedTerms.length > 0 && (
             <div className="w-[100%] flex flex-col flex-wrap pt-[5px]">
@@ -274,7 +274,7 @@ const SearchBar = () => {
             </div>
           )}
         </div>
-      )}
+      )} */}
     </DesktopSearchBar>
   ) : (
     <MobileSearchBar onSubmit={onSubmit}>

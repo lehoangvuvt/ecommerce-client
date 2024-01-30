@@ -3,6 +3,7 @@
 import MyButton from "@/components/Button";
 import useStore from "@/store/store";
 import { TStoreOverview } from "@/types/api.type";
+import moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
@@ -189,6 +190,10 @@ const StoreOverview: React.FC<Props> = ({ overview, style, withBG = true }) => {
         <StoreStat>
           <p>Follower</p>
           <p>{overview.total_followers_count}</p>
+        </StoreStat>
+        <StoreStat>
+          <p>Joined</p>
+          <p>{moment(new Date(overview.createdAt)).fromNow()}</p>
         </StoreStat>
       </StoreStatsContainer>
     </Container>
