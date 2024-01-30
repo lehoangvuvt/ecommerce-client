@@ -10,7 +10,7 @@ const Container = styled.div`
   width: 100%;
   flex-flow: column wrap;
   display: flex;
-  gap: 15px;
+  gap: 14px;
 `;
 
 const CurrentImageContainer = styled.div`
