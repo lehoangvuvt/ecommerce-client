@@ -108,4 +108,48 @@ export const UserService = {
       return null;
     }
   },
+  async signUp(signUpData: {
+    username: string;
+    password: string;
+    email: string;
+  }): Promise<{ message: string } | null> {
+    try {
+      const response = await axios({
+        url: `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/sign-up`,
+        withCredentials: true,
+        method: "POST",
+        data: signUpData,
+      });
+      const data = response.data as { message: string };
+      return data;
+    } catch (error) {
+      return null;
+    }
+  },
+  async verifyAccount(
+    verifyId: string
+  ): Promise<
+    { status: "Success"; message: string } | { status: "Failed"; error: string }
+  > {
+    try {
+      const response = await axios({
+        url: `${process.env.NEXT_PUBLIC_BASE_API_URL}${baseRoute}/verify`,
+        withCredentials: true,
+        method: "PUT",
+        data: {
+          verify_id: verifyId,
+        },
+      });
+      const data = response.data as { message: string };
+      return {
+        status: "Success",
+        message: data.message,
+      };
+    } catch (e: any) {
+      return {
+        status: "Failed",
+        error: e.response.data.error,
+      };
+    }
+  },
 };

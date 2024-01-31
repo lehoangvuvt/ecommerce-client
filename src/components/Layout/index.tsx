@@ -26,7 +26,7 @@ type Props = {
   children: ReactNode;
 };
 
-const noHeaderRoutes: string[] = ["/login"];
+const noHeaderRoutes: string[] = ["/login", "/sign-up"];
 const noFooterRoutes: string[] = [];
 const noPathRoutes: string[] = [
   "/",
@@ -42,7 +42,11 @@ const Layout = ({ children }: Props) => {
   const { deviceType } = useScreenWidth();
   const checkIfShowPath = () => {
     if (noPathRoutes.includes(pathname)) return false;
-    if (pathname.startsWith("/order-tracking") || pathname.startsWith("/me")) {
+    if (
+      pathname.startsWith("/order-tracking") ||
+      pathname.startsWith("/me") ||
+      pathname.startsWith("/verify")
+    ) {
       return false;
     }
     if (deviceType === "mobile") return false;

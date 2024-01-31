@@ -72,7 +72,6 @@ const LoginForm = styled.form`
   padding: 50px 30px 50px 30px;
   background: white;
   border-radius: 3px;
-  height: 450px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
   @media (max-width: 768px) {
     margin-right: 0px;
@@ -92,15 +91,20 @@ const LoginForm = styled.form`
 const Page = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
-  const { setUserInfo } = useStore();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const response = await UserService.login(username, pw);
+    const response = await UserService.signUp({
+      username,
+      password: pw,
+      email,
+    });
     if (response) {
-      setUserInfo(response);
-      router.back();
+      alert(response.message);
+    } else {
+      alert("failed");
     }
   };
 
@@ -116,7 +120,7 @@ const Page = () => {
             style={{ objectFit: "contain", objectPosition: "center" }}
           />
         </HeaderLogo>
-        <HeaderTitle>Log In</HeaderTitle>
+        <HeaderTitle>Sign Up</HeaderTitle>
       </Header>
       <Main>
         <LoginForm onSubmit={handleSubmit}>
@@ -125,6 +129,13 @@ const Page = () => {
             value={username}
             onChange={setUsername}
             title="Username"
+            style={{ height: "48px" }}
+          />
+          <InputField
+            type="text"
+            value={email}
+            onChange={setEmail}
+            title="Email"
             style={{ height: "48px" }}
           />
           <InputField
@@ -144,7 +155,7 @@ const Page = () => {
             fontSize="15px"
             customStyle={{ borderRadius: "4px" }}
           >
-            LOG IN
+            Sign Up
           </MyButton>
         </LoginForm>
       </Main>
