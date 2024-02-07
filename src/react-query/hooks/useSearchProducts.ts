@@ -1,6 +1,5 @@
 import { useQuery } from "react-query";
 import REACT_QUERY_KEYS from "../keys";
-import { CategoryService } from "@/services/category.service";
 import { TPagingListResponse, TProducItem } from "@/types/api.type";
 import { ProductService } from "@/services/product.service";
 
@@ -9,15 +8,13 @@ const getSearchProducts = async ({
 }: {
   queryKey: any[];
 }): Promise<TPagingListResponse<TProducItem>> => {
-  const serachParams = queryKey[1];
-  const result = await ProductService.searchProducts(serachParams);
+  const searchParams = queryKey[1];
+  const result = await ProductService.searchProducts(searchParams);
   return result;
 };
 
 const useSearchProducts = (
-  searchParams: {
-    [key: string]: string;
-  },
+  searchParams: string,
   deviceType: "desktop" | "mobile" | null
 ): {
   result: TPagingListResponse<TProducItem>;
@@ -28,10 +25,7 @@ const useSearchProducts = (
     [REACT_QUERY_KEYS.GET_SEARCH_PRODUCTS, searchParams],
     getSearchProducts,
     {
-      enabled:
-        !!searchParams &&
-        Object.keys(searchParams).length > 0 &&
-        deviceType === "desktop",
+      enabled: searchParams.trim().length > 0 && deviceType === "desktop",
     }
   );
   return {

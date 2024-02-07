@@ -101,7 +101,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
 
   if (slugTypeSuffix === "i") return renderProduct();
   if (slugTypeSuffix === "cat") {
-    return <SearchView searchParams={{ c: params.slug }} />;
+    return <SearchView />;
   }
   return renderStore();
 };

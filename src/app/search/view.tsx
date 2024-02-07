@@ -5,18 +5,18 @@ import ProductItem from "@/components/ProductItem";
 import SearchFilter from "./components/searchFilter";
 import useStore from "@/store/store";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Paging from "./components/paging";
 import useScreenWidth from "@/hooks/useScreenWidth";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Tabs, { TTabItem } from "@/components/Tabs";
-import useSearchProducts from "@/react-query/hooks/useSearchProducts";
-import useSearchFilters from "@/react-query/hooks/useSearchFilters";
-import Spinner from "@/components/Spinner";
 import MobileList from "./components/mobileList";
 import ROUTES from "@/types/routes";
 import { SearchService } from "@/services/search.service";
+import useSearchProducts from "@/react-query/hooks/useSearchProducts";
+import useSearchFilters from "@/react-query/hooks/useSearchFilters";
+import Spinner from "@/components/Spinner";
 
 const Container = styled.div`
   width: 80%;
@@ -194,22 +194,21 @@ const FixedKeywordContainer = styled.div`
   }
 `;
 
-const SearchView = ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string };
-}) => {
+type Props = {};
+
+const SearchView: React.FC<Props> = () => {
+  const searchParams = useSearchParams();
   const { deviceType } = useScreenWidth();
   const {
-    isError: isErrorSearchProducts,
-    isLoading: isLoadingSearchProducts,
     result: products,
-  } = useSearchProducts(searchParams, deviceType);
+    isLoading: isLoadingProducts,
+    isError: isErrorSearchProducts,
+  } = useSearchProducts(searchParams.toString(), deviceType);
   const {
-    isError: isErrorSearchFilters,
-    isLoading: isLoadingSearchFilters,
     result: searchFilters,
-  } = useSearchFilters(searchParams);
+    isLoading: isLoadingSearchFilters,
+    isError: isErrorGetSearchFilters,
+  } = useSearchFilters(searchParams.toString());
   const { addFilterValues, filters, setPath } = useStore();
   const router = useRouter();
   const [isOpenMobileFilters, setOpenMobileFilters] = useState(false);
@@ -224,7 +223,7 @@ const SearchView = ({
   useEffect(() => {
     const getFixedKeyword = async () => {
       const response = await SearchService.getFixedKeyword(
-        searchParams["keyword"]
+        searchParams.get("keyword")!
       );
       if (response && response.fixed) {
         setFixedKeyword(response.fixed);
@@ -233,12 +232,13 @@ const SearchView = ({
     const handlePath = async () => {
       let lastPathValue = "";
 
-      if (searchParams["keyword"]) {
-        lastPathValue = searchParams["keyword"];
+      if (searchParams.get("keyword")) {
+        lastPathValue = searchParams.get("keyword")!;
         getFixedKeyword();
       } else {
-        if (searchParams["c"]) {
-          lastPathValue = searchParams["c"]
+        if (searchParams.get("c")) {
+          lastPathValue = searchParams
+            .get("c")!
             .split("-")
             .slice(0, -1)
             .reduce(
@@ -262,11 +262,11 @@ const SearchView = ({
       ]);
     };
     handlePath();
-  }, [searchParams]);
+  }, [searchParams, setPath]);
 
   useEffect(() => {
-    for (let key in searchParams) {
-      const values = searchParams[key].split(",");
+    for (let key of searchParams.keys()) {
+      const values = searchParams.get(key)!.split(",");
       addFilterValues(key, values);
     }
   }, []);
@@ -405,41 +405,39 @@ const SearchView = ({
           />
         )}
         <Right>
-          {products && products.data && products.data.length > 0 && (
-            <>
-              {deviceType === "desktop" && (
-                <RightHeader>
-                  <Tabs
-                    onClickTab={(value) => setSortType(value)}
-                    selectedTabValue={
-                      filters["sortBy"] ? filters["sortBy"][0] : null
-                    }
-                    style={{ width: "90%" }}
-                    type="desktop"
-                    tabItems={sortTabItems}
-                  />
-                  <Paging
-                    style={{ flex: "1" }}
-                    current_page={products ? products.current_page : 0}
-                    has_next={products ? products.has_next : false}
-                    total_page={products ? products.total_page : 0}
-                  />
-                </RightHeader>
-              )}
-              {deviceType === "desktop" && (
-                <ProductsContainer ref={productsContainerRef}>
-                  {products &&
-                    products.data.map((product, pIndex) => (
-                      <ProductItem key={pIndex} product={product} />
-                    ))}
-                </ProductsContainer>
-              )}
-            </>
-          )}
+          <>
+            {deviceType === "desktop" && (
+              <RightHeader>
+                <Tabs
+                  onClickTab={(value) => setSortType(value)}
+                  selectedTabValue={
+                    filters["sortBy"] ? filters["sortBy"][0] : null
+                  }
+                  style={{ width: "90%" }}
+                  type="desktop"
+                  tabItems={sortTabItems}
+                />
+                <Paging
+                  style={{ flex: "1" }}
+                  current_page={products ? products.current_page : 0}
+                  has_next={products ? products.has_next : false}
+                  total_page={products ? products.total_page : 0}
+                />
+              </RightHeader>
+            )}
+            {deviceType === "desktop" && (
+              <ProductsContainer ref={productsContainerRef}>
+                {products &&
+                  products.data.map((product, pIndex) => (
+                    <ProductItem key={pIndex} product={product} />
+                  ))}
+              </ProductsContainer>
+            )}
+          </>
 
           {deviceType === "mobile" && <MobileList />}
 
-          {isLoadingSearchProducts && (
+          {isLoadingProducts && (
             <div
               style={{
                 width: "100%",
@@ -453,7 +451,7 @@ const SearchView = ({
             </div>
           )}
         </Right>
-        {!isLoadingSearchProducts &&
+        {!isLoadingProducts &&
           products.data.length === 0 &&
           deviceType === "desktop" && <EmptyContainer>Empty</EmptyContainer>}
       </Container>

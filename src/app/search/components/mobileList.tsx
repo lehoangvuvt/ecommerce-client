@@ -25,8 +25,9 @@ const MobileList = () => {
   const [searchParams, setSearchParams] = useState<{
     [key: string]: string;
   }>({});
-  const { result, isError, isLoading } =
-    useSearchInfiniteProducts(searchParams);
+  const { result, isError, isLoading } = useSearchInfiniteProducts(
+    params.toString()
+  );
   const [products, setProducts] = useState<TProducItem[]>([]);
   const productsContainerRef = useRef<HTMLDivElement>(null);
   const [isEndScroll, setEndScroll] = useState(false);

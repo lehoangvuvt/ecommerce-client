@@ -69,10 +69,9 @@ const Main = styled.div`
 
 const LoginForm = styled.form`
   width: 500px;
-  padding: 50px 30px 50px 30px;
+  padding: 40px 30px 30px 30px;
   background: white;
   border-radius: 3px;
-  height: 450px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
   @media (max-width: 768px) {
     margin-right: 0px;
@@ -146,6 +145,15 @@ const Page = () => {
           >
             LOG IN
           </MyButton>
+          <section>
+            {"Don't have an account? "}
+            <span
+              onClick={() => router.push("/sign-up")}
+              style={{ cursor: "pointer", color: "blue" }}
+            >
+              Sign up here
+            </span>
+          </section>
         </LoginForm>
       </Main>
     </Container>

@@ -3,11 +3,11 @@
 import useStore from "@/store/store";
 import { TProducItem } from "@/types/api.type";
 import { convertNumberToCurrencyString } from "@/utils/string.utils";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
+import BlurImage from "../BlurImage";
 
 const Container = styled.div`
   width: calc(20% - 8px);
@@ -113,11 +113,9 @@ const ProductItem: React.FC<Props> = ({ product }) => {
       }}
     >
       <ProductImage>
-        <Image
-          fill
+        <BlurImage
           style={{ objectFit: "contain", objectPosition: "top" }}
           src={product.product_images[0]}
-          alt={`${product.id}-image`}
         />
       </ProductImage>
       <ProductInfo>

@@ -9,14 +9,14 @@ const getSearchProducts = async ({
 }: {
   queryKey: any[];
 }): Promise<TPagingListResponse<TProducItem>> => {
-  const serachParams = queryKey[1];
+  const serachParams = queryKey[1] as string;
   const result = await ProductService.searchProducts(serachParams);
   return result;
 };
 
-const useSearchInfiniteProducts = (searchParams: {
-  [key: string]: string;
-}): {
+const useSearchInfiniteProducts = (
+  searchParams: string
+): {
   result: TPagingListResponse<TProducItem>;
   isError: boolean;
   isLoading: boolean;
@@ -25,7 +25,7 @@ const useSearchInfiniteProducts = (searchParams: {
     [REACT_QUERY_KEYS.GET_SEARCH_INFINITE_PRODUCTS, searchParams],
     getSearchProducts,
     {
-      enabled: !!searchParams && Object.keys(searchParams).length > 0,
+      enabled: searchParams.trim().length > 0,
     }
   );
   return {

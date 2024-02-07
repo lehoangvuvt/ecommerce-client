@@ -12,28 +12,25 @@ const Container = styled.div<{ $width: string }>`
   gap: 2.5px;
 `;
 
-const Square = styled.div<{ $index: number; $bgColor: string }>`
-  width: calc(50% - 1.25px);
-  height: calc(50% - 1.25px);
+const Dot = styled.div<{ $index: number; $bgColor: string }>`
+  width: calc(30% - 1.25px);
+  height: calc(30% - 1.25px);
+  border-radius: 50%;
   background-color: ${(props) => props.$bgColor};
-  animation: squareBlur 1s ease infinite alternate
+  animation: dotBlur 0.8s ease infinite alternate
     ${(props) => props.$index * 0.25}s;
-  @keyframes squareBlur {
+  @keyframes dotBlur {
     0% {
-      opacity: 0.5;
-      transform: scale(0.8);
-    }
-    25% {
       opacity: 1;
-      transform: scale(1);
+    }
+    20% {
+      opacity: 1;
     }
     50% {
-      opacity: 1;
-      transform: scale(1);
+      opacity: 0.5;
     }
     100% {
-      opacity: 1;
-      transform: scale(1);
+      opacity: 0.5;
     }
   }
 `;
@@ -51,10 +48,10 @@ const Spinner: React.FC<Props> = ({
 }) => {
   return (
     <Container $width={width} style={style}>
-      {Array(4)
+      {Array(3)
         .fill("")
         .map((_, i) => (
-          <Square $bgColor={bgColor} $index={i} key={i} />
+          <Dot $bgColor={bgColor} $index={i} key={i} />
         ))}
     </Container>
   );

@@ -157,6 +157,15 @@ const Page = () => {
           >
             Sign Up
           </MyButton>
+          <section>
+            {"Already have an account? "}
+            <span
+              onClick={() => router.push("/login")}
+              style={{ cursor: "pointer", color: "blue" }}
+            >
+              Login here
+            </span>
+          </section>
         </LoginForm>
       </Main>
     </Container>

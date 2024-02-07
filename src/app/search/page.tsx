@@ -39,10 +39,6 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string };
-}) {
-  return <SearchView searchParams={searchParams} />;
+export default async function Page() {
+  return <SearchView />;
 }

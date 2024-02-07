@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import useScreenWidth from "@/hooks/useScreenWidth";
+import BlurImage from "../BlurImage";
 
 const Container = styled.div`
   width: 100%;
@@ -16,6 +17,7 @@ const Container = styled.div`
 const CurrentImageContainer = styled.div`
   width: 90%;
   height: 400px;
+  cursor: pointer;
   position: relative;
   @media (max-width: 768px) {
     width: 100%;
@@ -43,9 +45,12 @@ const SliderItem = styled.div`
   border-style: solid;
   border-width: 2px;
   border-color: transparent;
+  border-radius: 5px;
+  overflow: hidden;
   &:hover,
   &.selected {
     border-color: red;
+    border-radius: 5px;
   }
   @media (max-width: 400px) {
     width: calc(25% - 10px);
@@ -82,6 +87,67 @@ const ControlButton = styled.button`
   padding: 0px 2px;
 `;
 
+const SliderModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const SliderModalContent = styled.div`
+  width: 850px;
+  height: 540px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  padding: 10px;
+  gap: 5px;
+`;
+
+const SliderModalCurrentImage = styled.div`
+  width: 60%;
+  height: 100%;
+  position: relative;
+`;
+
+const SliderModalImagesContainer = styled.div`
+  width: calc(40% - 5px);
+  display: flex;
+  flex-flow: row wrap;
+  gap: 5px;
+  padding-left: 5px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-content: flex-start;
+`;
+
+const SlideModalItem = styled.div`
+  width: calc(33% - 5px);
+  aspect-ratio: 1;
+  position: relative;
+  cursor: pointer;
+  border-width: 2px;
+  border-style: solid;
+  overflow: hidden;
+  border-color: transparent;
+  border-radius: 4px;
+  &:hover {
+    filter: brightness(105%);
+  }
+  &.selected {
+    border-color: red;
+  }
+`;
+
 type Props = {
   images: string[];
   isShowCurrentImage?: boolean;
@@ -92,6 +158,7 @@ const ImageSlider: React.FC<Props> = ({
   isShowCurrentImage = true,
 }) => {
   const { deviceType } = useScreenWidth();
+  const [isOpenModal, setOpenModal] = useState(false);
   const [currentImage, setCurrentImage] = useState<string | null>("");
   const [range, setRange] = useState<{ start: number; end: number } | null>(
     null
@@ -155,7 +222,12 @@ const ImageSlider: React.FC<Props> = ({
 
   return (
     <Container>
-      <CurrentImageContainer>
+      <CurrentImageContainer
+        onClick={() => {
+          if (deviceType === "mobile") return;
+          setOpenModal(true);
+        }}
+      >
         {currentImage && (
           <Image
             src={currentImage}
@@ -174,6 +246,10 @@ const ImageSlider: React.FC<Props> = ({
           images.slice(range.start, range.end).map((image, i) => (
             <SliderItem
               className={currentImage === image ? "selected" : ""}
+              onClick={() => {
+                if (deviceType === "mobile") return;
+                setOpenModal(true);
+              }}
               onMouseEnter={() => setCurrentImage(image)}
               key={image}
             >
@@ -201,6 +277,36 @@ const ImageSlider: React.FC<Props> = ({
           </ControlButton>
         </SliderControls>
       </Slider>
+      {isOpenModal && (
+        <SliderModal
+          onClick={(e) => e.currentTarget === e.target && setOpenModal(false)}
+        >
+          <SliderModalContent>
+            <SliderModalCurrentImage>
+              <BlurImage
+                src={currentImage ?? ""}
+                style={{ objectFit: "cover" }}
+              />
+            </SliderModalCurrentImage>
+            <SliderModalImagesContainer>
+              {images.map((image, i) => (
+                <SlideModalItem
+                  className={currentImage === image ? "selected" : ""}
+                  onClick={() => setCurrentImage(image)}
+                  key={i}
+                >
+                  <BlurImage
+                    style={{
+                      objectFit: "cover",
+                    }}
+                    src={image}
+                  />
+                </SlideModalItem>
+              ))}
+            </SliderModalImagesContainer>
+          </SliderModalContent>
+        </SliderModal>
+      )}
     </Container>
   );
 };

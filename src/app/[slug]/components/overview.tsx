@@ -19,6 +19,7 @@ import VariancesMobile from "./variancesMobile";
 import useModal from "@/hooks/useModal";
 import Modal from "@/components/Modal";
 import Spinner from "@/components/Spinner";
+import BlurImage from "@/components/BlurImage";
 
 const Container = styled.div`
   width: 78%;
@@ -309,15 +310,13 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
       <Left>
         {currentImage && (
           <CurrentImageContainer>
-            <Image
+            <BlurImage
               style={{
                 objectFit: deviceType === "desktop" ? "contain" : "cover",
                 objectPosition: deviceType === "desktop" ? "center" : "top",
                 transform: deviceType === "desktop" ? "scale(0.9)" : "scale(1)",
               }}
-              fill
               src={currentImage}
-              alt="product-image"
             />
           </CurrentImageContainer>
         )}
