@@ -6,7 +6,7 @@ import { TProducItem } from "@/types/api.type";
 import { useSearchParams } from "next/navigation";
 import useSearchInfiniteProducts from "@/react-query/hooks/useSearchInfiniteProducts";
 import styled from "styled-components";
-import Spinner from "@/components/Spinner";
+import Loading from "@/components/Loading";
 
 const Container = styled.div`
   width: 100%;
@@ -106,7 +106,7 @@ const MobileList = () => {
             justifyContent: "center",
           }}
         >
-          <Spinner />
+          <Loading />
         </div>
       )}
     </Container>

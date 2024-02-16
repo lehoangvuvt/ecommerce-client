@@ -1,6 +1,6 @@
 "use client";
 
-import Spinner from "@/components/Spinner";
+import Loading from "@/components/Loading";
 import { UserService } from "@/services/user.service";
 import useStore from "@/store/store";
 import { useEffect, useState } from "react";
@@ -41,7 +41,7 @@ const Authentication = () => {
     <>
       {loading && (
         <LoadingContainer>
-          <Spinner width="100px" />
+          <Loading width="100px" />
         </LoadingContainer>
       )}
     </>

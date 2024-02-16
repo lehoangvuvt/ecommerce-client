@@ -229,11 +229,15 @@ const Cart = () => {
   const handleCheckout = () => {
     if (selectedProductIds.length === 0) return;
     let checkoutParams = "?cart_items=";
-    selectedProductIds.forEach((id) => {
-      checkoutParams += `${id},`;
+    selectedProductIds.forEach((id, index) => {
+      checkoutParams += `${id}`;
+      if (index < selectedProductIds.length - 1) {
+        checkoutParams += ",";
+      }
     });
+    checkoutParams += `&step=information`;
     router.push(
-      "/check-out" + checkoutParams.substring(0, checkoutParams.length - 1)
+      "/check-out" + checkoutParams
     );
   };
 

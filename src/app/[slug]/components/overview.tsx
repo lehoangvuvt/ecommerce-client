@@ -18,7 +18,7 @@ import VariancesDesktop from "./variancesDesktop";
 import VariancesMobile from "./variancesMobile";
 import useModal from "@/hooks/useModal";
 import Modal from "@/components/Modal";
-import Spinner from "@/components/Spinner";
+import Loading from "@/components/Loading";
 import BlurImage from "@/components/BlurImage";
 
 const Container = styled.div`
@@ -256,7 +256,7 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
             justifyContent: "center",
           }}
         >
-          <Spinner bgColor="black" width="100px" />
+          <Loading bgColor="black" width="100px" />
         </div>
       );
       showModal();

@@ -6,7 +6,6 @@ import banner0 from "/public/images/home/carousel/banner-0.png";
 import banner1 from "/public/images/home/carousel/banner-1.jpg";
 import banner2 from "/public/images/home/carousel/banner-2.jpg";
 import banner3 from "/public/images/home/carousel/banner-3.jpg";
-import Spinner from "@/components/Spinner";
 
 const Container = styled.div`
   width: 100%;

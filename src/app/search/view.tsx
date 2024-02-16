@@ -16,7 +16,7 @@ import ROUTES from "@/types/routes";
 import { SearchService } from "@/services/search.service";
 import useSearchProducts from "@/react-query/hooks/useSearchProducts";
 import useSearchFilters from "@/react-query/hooks/useSearchFilters";
-import Spinner from "@/components/Spinner";
+import Loading from "@/components/Loading";
 
 const Container = styled.div`
   width: 80%;
@@ -447,7 +447,7 @@ const SearchView: React.FC<Props> = () => {
                 alignItems: "center",
               }}
             >
-              <Spinner />
+              <Loading />
             </div>
           )}
         </Right>

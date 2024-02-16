@@ -41,7 +41,7 @@ type Props = {
   style?: React.CSSProperties;
 };
 
-const Spinner: React.FC<Props> = ({
+const Loading: React.FC<Props> = ({
   width = "50px",
   bgColor = "rgba(0, 0, 0, 0.2)",
   style,
@@ -57,4 +57,4 @@ const Spinner: React.FC<Props> = ({
   );
 };
 
-export default Spinner;
+export default Loading;

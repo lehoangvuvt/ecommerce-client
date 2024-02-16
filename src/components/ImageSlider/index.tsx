@@ -111,6 +111,13 @@ const SliderModalContent = styled.div`
   justify-content: center;
   padding: 10px;
   gap: 5px;
+  opacity: 0;
+  animation: SliderModalContent 0.1s ease forwards;
+  @keyframes SliderModalContent {
+    to {
+      opacity: 1;
+    }
+  }
 `;
 
 const SliderModalCurrentImage = styled.div`

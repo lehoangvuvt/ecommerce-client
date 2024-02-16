@@ -1,6 +1,6 @@
 "use client";
 
-import Spinner from "@/components/Spinner";
+import Loading from "@/components/Loading";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -11,10 +11,10 @@ const Container = styled.div`
   justify-content: center;
   position: relative;
 `;
-export default function Loading() {
+export default function PageLoading() {
   return (
     <Container>
-      <Spinner />
+      <Loading />
     </Container>
   );
 }

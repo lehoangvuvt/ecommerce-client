@@ -1,5 +1,6 @@
 "use client";
 
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import InputField from "@/components/InputField";
 import MobilePageHeader from "@/components/MobilePageHeader";
 import Select from "@/components/Select";
@@ -8,7 +9,7 @@ import { vietnameCities } from "@/const/others.const";
 import useScreenWidth from "@/hooks/useScreenWidth";
 import { UserService } from "@/services/user.service";
 import { TFormattedCartItem } from "@/types/api.type";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import OrderSummaryItem from "./components/orderSummaryItem";
@@ -58,7 +59,9 @@ const Left = styled(BaseContainer)`
   display: flex;
   flex-flow: column;
   background-color: transparent;
+  align-items: flex-end;
   gap: 20px;
+  box-shadow: none;
   @media (max-width: 768px) {
     width: 100%;
     margin: auto;
@@ -195,6 +198,7 @@ const ViewMoreBtn = styled.div`
 `;
 
 const Checkout = () => {
+  const router = useRouter();
   const params = useSearchParams();
   const { deviceType } = useScreenWidth();
   const [firstName, setFirstName] = useState("");
@@ -202,6 +206,7 @@ const Checkout = () => {
   const [city, setCity] = useState<string | null>("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
+  const [currentStep, setCurrentStep] = useState(params.get("step"));
   const [checkoutSummary, setCheckoutSummary] = useState<TFormattedCartItem[]>(
     []
   );
@@ -221,52 +226,185 @@ const Checkout = () => {
     }
   }, [params]);
 
+  const getSubmitButtonText = () => {
+    let text = "";
+    switch (currentStep) {
+      case "information":
+        text = "Continue to shipping";
+        break;
+      case "shipping":
+        text = "Continue to payment";
+        break;
+      case "payment":
+        text = "Pay now";
+        break;
+    }
+    return text;
+  };
+
+  const getBackButtonText = () => {
+    let text = "";
+    switch (currentStep) {
+      case "shipping":
+        text = "Return to information";
+        break;
+      case "payment":
+        text = "Return to shipping";
+        break;
+    }
+    return text;
+  };
+
+  const handleClickSubmitButton = () => {
+    let url = "";
+    let nextStep = "";
+    switch (currentStep) {
+      case "information":
+        nextStep = "shipping";
+        break;
+      case "shipping":
+        nextStep = "payment";
+        break;
+    }
+    for (var key of params.keys()) {
+      if (key !== "step") {
+        url += `${key}=${params.get(key)}&`;
+      } else {
+        url += `${key}=${nextStep}&`;
+      }
+    }
+    setCurrentStep(nextStep);
+    router.push(`/check-out?${url.slice(0, -1)}`);
+  };
+
+  const handleClickBackButton = () => {
+    let url = "";
+    let prevStep = "";
+    switch (currentStep) {
+      case "shipping":
+        prevStep = "information";
+        break;
+      case "payment":
+        prevStep = "shipping";
+        break;
+    }
+    for (var key of params.keys()) {
+      if (key !== "step") {
+        url += `${key}=${params.get(key)}&`;
+      } else {
+        url += `${key}=${prevStep}&`;
+      }
+    }
+    setCurrentStep(prevStep);
+    router.push(`/check-out?${url.slice(0, -1)}`);
+  };
+
+  const renderInformation = () => {
+    return (
+      <FieldsContainer>
+        <h1>Shipping Address</h1>
+        <InputField
+          style={{ height: "50px" }}
+          onChange={(value) => setFirstName(value)}
+          title="First Name"
+          value={firstName}
+        />
+        <InputField
+          style={{ height: "50px" }}
+          onChange={(value) => setLastName(value)}
+          title="Last Name"
+          value={lastName}
+        />
+        <InputField
+          style={{ height: "50px" }}
+          onChange={(value) => setPhone(value)}
+          title="Mobile Number"
+          value={phone}
+        />
+        <Select
+          style={{ height: "50px" }}
+          title="City"
+          value={city}
+          onChangeValue={setCity}
+        >
+          {vietnameCities.map((city) => (
+            <Option value={city.slug} key={city.slug}>
+              {city.name}
+            </Option>
+          ))}
+        </Select>
+        <InputField
+          style={{ height: "50px" }}
+          onChange={(value) => setAddress(value)}
+          title="Address"
+          value={address}
+        />
+      </FieldsContainer>
+    );
+  };
+
+  const renderShipping = () => {
+    return (
+      <FieldsContainer>
+        <h1>Shipping method</h1>
+      </FieldsContainer>
+    );
+  };
+
   return (
     <Container>
       {deviceType === "mobile" && <MobilePageHeader headerText="Checkout" />}
       <Left>
-        <FieldsContainer>
-          <h1>Shipping Address</h1>
-          <InputField
-            style={{ height: "50px" }}
-            onChange={(value) => setFirstName(value)}
-            title="First Name"
-            value={firstName}
-          />
-          <InputField
-            style={{ height: "50px" }}
-            onChange={(value) => setLastName(value)}
-            title="Last Name"
-            value={lastName}
-          />
-          <InputField
-            style={{ height: "50px" }}
-            onChange={(value) => setPhone(value)}
-            title="Mobile Number"
-            value={phone}
-          />
-          <Select
-            style={{ height: "50px" }}
-            title="City"
-            value={city}
-            onChangeValue={setCity}
+        {currentStep === "information" && renderInformation()}
+        {currentStep === "shipping" && renderShipping()}
+        <div className="w-full flex items-center justify-between">
+          <MyButton
+            disabled={currentStep === "information"}
+            height="45px"
+            width={deviceType === "desktop" ? "auto" : "95%"}
+            background="transparent"
+            fontSize="14px"
+            onClick={handleClickBackButton}
+            fontColor="#0061FF"
+            customStyle={{
+              fontWeight: 500,
+              borderRadius: "4px",
+              padding: "10px 20px",
+              cursor:
+                currentStep === "information"
+                  ? "default !important"
+                  : "pointer",
+            }}
           >
-            {vietnameCities.map((city) => (
-              <Option value={city.slug} key={city.slug}>
-                {city.name}
-              </Option>
-            ))}
-          </Select>
-          <InputField
-            style={{ height: "50px" }}
-            onChange={(value) => setAddress(value)}
-            title="Address"
-            value={address}
-          />
-        </FieldsContainer>
-        <PaymentInfo>
-          <h1>Payment Info</h1>
-        </PaymentInfo>
+            {currentStep !== "information" && (
+              <ArrowBackIosIcon color="inherit" fontSize="inherit" />
+            )}
+            {getBackButtonText()}
+          </MyButton>
+
+          <MyButton
+            disabled={
+              firstName.length === 0 ||
+              lastName.length === 0 ||
+              phone.length === 0 ||
+              city?.length === 0 ||
+              address.length === 0
+            }
+            height="45px"
+            width={deviceType === "desktop" ? "auto" : "95%"}
+            background="red"
+            fontSize="16px"
+            onClick={handleClickSubmitButton}
+            fontColor="white"
+            customStyle={{
+              fontWeight: 600,
+              borderRadius: "4px",
+              padding: "10px 20px",
+            }}
+          >
+            {getSubmitButtonText()}
+          </MyButton>
+        </div>
       </Left>
       <Right>
         <OrderSummary className={isViewAll ? "view-all" : "view-short"}>
@@ -312,24 +450,6 @@ const Checkout = () => {
             </OrderTotalPriceRight>
           </OrderTotalPriceItem>
         </OrderTotalPrice>
-        <MyButton
-          disabled={
-            firstName.length === 0 ||
-            lastName.length === 0 ||
-            phone.length === 0 ||
-            city?.length === 0 ||
-            address.length === 0
-          }
-          height="45px"
-          width={deviceType === "desktop" ? "100%" : "95%"}
-          background="red"
-          fontSize="16px"
-          onClick={() => {}}
-          fontColor="white"
-          customStyle={{ fontWeight: 600, borderRadius: "4px", margin: "auto" }}
-        >
-          Pay Now
-        </MyButton>
       </Right>
     </Container>
   );
