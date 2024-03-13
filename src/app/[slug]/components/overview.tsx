@@ -227,6 +227,7 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
   >("close");
 
   const addToCart = async () => {
+    if (!userInfo) return router.push("/login");
     if (!selectedVariance) return;
     const selectedMainAttrVal = selectedVariance.main;
     const selectedSubAttrVal = selectedVariance.sub;

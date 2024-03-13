@@ -90,8 +90,8 @@ const LoginForm = styled.form`
 
 const Page = () => {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [pw, setPw] = useState("");
+  const [username, setUsername] = useState("lehoangvu");
+  const [pw, setPw] = useState("123456789");
   const { setUserInfo } = useStore();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

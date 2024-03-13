@@ -234,7 +234,7 @@ const SearchView: React.FC<Props> = () => {
 
       if (searchParams.get("keyword")) {
         lastPathValue = searchParams.get("keyword")!;
-        getFixedKeyword();
+        // getFixedKeyword();
       } else {
         if (searchParams.get("c")) {
           lastPathValue = searchParams
@@ -359,7 +359,7 @@ const SearchView: React.FC<Props> = () => {
 
   return (
     <>
-      {fixedKeyword && (
+      {/* {fixedKeyword && (
         <FixedKeywordContainer>
           Did you mean:&nbsp;
           <span
@@ -370,7 +370,7 @@ const SearchView: React.FC<Props> = () => {
             {fixedKeyword}
           </span>
         </FixedKeywordContainer>
-      )}
+      )} */}
       <Container>
         {deviceType === "desktop" && renderDesktopFilters()}
         {deviceType === "mobile" && renderMobileFilters()}

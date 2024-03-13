@@ -12,7 +12,7 @@ const Container = styled.div`
   display: flex;
   flex-flow: column wrap;
   position: relative;
-  min-height: 200vh;
+  min-height: calc(100vh - 100px);
   @media (max-width: 768px) {
     margin-top: 50px;
   }
@@ -22,7 +22,7 @@ const HomeView = () => {
   return (
     <Container style={{ display: "flex", alignItems: "center" }}>
       <Carousel
-        style={{ width: "89%", aspectRatio: 4, marginTop: '20px' }}
+        style={{ width: "89%", aspectRatio: 4, marginTop: "20px" }}
         images={[banner0.src, banner1.src, banner2.src, banner3.src]}
       />
     </Container>
