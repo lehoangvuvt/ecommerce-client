@@ -186,6 +186,8 @@ const SearchBar = () => {
   useEffect(() => {
     if (filters["keyword"]) {
       setSearchText(filters["keyword"][0]);
+    } else {
+      setSearchText("sneeker");
     }
   }, [filters]);
 
