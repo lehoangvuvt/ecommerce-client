@@ -148,6 +148,7 @@ const OverviewSectionTitle = styled.section`
 const OverviewSectionContent = styled.section`
   height: 100%;
   flex: 1;
+  display: flex;
   @media (max-width: 768px) {
     width: 100%;
     padding: 0px 20px;
@@ -418,7 +419,11 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
                   background="rgb(255,0,0,0.05)"
                   fontColor="red"
                   fontSize="14px"
-                  customStyle={{ marginRight: "20px", border: "1px solid red" }}
+                  customStyle={{
+                    marginRight: "20px",
+                    border: "1px solid red",
+                    width: "40%",
+                  }}
                 >
                   <AddShoppingCartIcon
                     style={{ fontSize: "20px" }}
@@ -435,6 +440,9 @@ const Overview: React.FC<Props> = ({ details, attributes }) => {
                   background="red"
                   fontColor="white"
                   fontSize="14px"
+                  customStyle={{
+                    width: "40%",
+                  }}
                 >
                   Buy Now
                 </MyButton>
