@@ -90,22 +90,20 @@ const LoginForm = styled.form`
 
 const Page = () => {
   const router = useRouter();
+  const [isLoading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const response = await UserService.signUp({
       username,
       password: pw,
       email,
     });
-    if (response) {
-      alert(response.message);
-    } else {
-      alert("failed");
-    }
+    setLoading(false);
   };
 
   return (
@@ -146,6 +144,7 @@ const Page = () => {
             style={{ height: "48px" }}
           />
           <MyButton
+            isLoading={isLoading}
             background="red"
             fontColor="white"
             width="100%"

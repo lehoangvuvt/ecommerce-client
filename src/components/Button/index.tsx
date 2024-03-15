@@ -1,5 +1,6 @@
 import { MouseEventHandler } from "react";
 import styled, { CSSProperties } from "styled-components";
+import Loading from "../Loading";
 
 interface Props {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ interface Props {
   customStyle?: CSSProperties;
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  isLoading?: boolean;
 }
 
 interface ButtonPropsType {
@@ -30,6 +32,9 @@ const Button = styled.button<ButtonPropsType>`
   user-select: none;
   border: none;
   outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   &:hover {
     filter: brightness(95%);
@@ -50,10 +55,11 @@ const MyButton: React.FC<Props> = ({
   customStyle,
   onClick,
   disabled = false,
+  isLoading = false,
 }) => {
   return (
     <Button
-      disabled={disabled}
+      disabled={disabled || isLoading}
       height={height}
       width={width}
       $background={background}
@@ -62,7 +68,20 @@ const MyButton: React.FC<Props> = ({
       style={customStyle}
       onClick={onClick}
     >
-      {children}
+      {!isLoading ? (
+        children
+      ) : (
+        <Loading
+          style={{
+            height: "30px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          bgColor="white"
+          width="30px"
+        />
+      )}
     </Button>
   );
 };

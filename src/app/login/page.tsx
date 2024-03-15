@@ -90,17 +90,20 @@ const LoginForm = styled.form`
 
 const Page = () => {
   const router = useRouter();
+  const [isLoading, setLoading] = useState(false);
   const [username, setUsername] = useState("lehoangvu");
   const [pw, setPw] = useState("123456789");
   const { setUserInfo } = useStore();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const response = await UserService.login(username, pw);
     if (response) {
       setUserInfo(response);
       router.back();
     }
+    setLoading(false);
   };
 
   return (
@@ -142,6 +145,7 @@ const Page = () => {
             onClick={() => {}}
             fontSize="15px"
             customStyle={{ borderRadius: "4px" }}
+            isLoading={isLoading}
           >
             LOG IN
           </MyButton>
